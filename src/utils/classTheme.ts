@@ -1,4 +1,4 @@
-import type { AgentMode, PermissionLevel, AgentPermissions } from "../types/agent.ts"
+import type { AgentMode, PermissionLevel, AgentPermissions, DnDStats } from "../types/agent.ts"
 import { MODE_CLASS_MAP } from "../types/agent.ts"
 
 export interface ClassTheme {
@@ -43,7 +43,7 @@ export function getClassTheme(mode: AgentMode): ClassTheme {
 }
 
 export function getPermissionLevel(permissions: AgentPermissions, tool: string): PermissionLevel {
-  const v = (permissions as Record<string, unknown>)[tool]
+  const v = permissions[tool]
   if (v === "allow" || v === "ask" || v === "deny") return v
   return "deny"
 }
@@ -69,6 +69,8 @@ export function computeCombatStats(stats: { strength: number; dexterity: number;
   }
 }
 
-export function getHighestStat(stats: Record<string, number>): string {
-  return Object.entries(stats).reduce((a, b) => a[1] >= b[1] ? a : b)[0]
+const STAT_KEYS: (keyof DnDStats)[] = ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]
+
+export function getHighestStat(stats: DnDStats): keyof DnDStats {
+  return STAT_KEYS.reduce((a, b) => stats[a] >= stats[b] ? a : b)
 }

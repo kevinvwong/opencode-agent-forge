@@ -18,7 +18,7 @@ function nextLevel(current: PermissionLevel | undefined): PermissionLevel {
 
 export default function PermissionsPanel({ permissions, onChange, readonly }: Props) {
   const getLevel = (tool: string): PermissionLevel => {
-    const v = (permissions as Record<string, unknown>)[tool]
+    const v = permissions[tool]
     if (v === "allow" || v === "ask" || v === "deny") return v
     return "deny"
   }

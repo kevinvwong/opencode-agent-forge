@@ -11,7 +11,7 @@ export default function SkillProficiencies({ permissions, size = "md" }: Props) 
   const fontS = size === "sm" ? "0.6rem" : "0.75rem"
 
   const getLevel = (tool: string): PermissionLevel => {
-    const v = (permissions as Record<string, unknown>)[tool]
+    const v = permissions[tool]
     if (v === "allow" || v === "ask" || v === "deny") return v
     return "deny"
   }

@@ -33,15 +33,23 @@ export default function Dashboard() {
   }
 
   const handleDelete = async (id: string) => {
-    await deleteAgent(id)
-    toast("Agent deleted", "error")
-    refresh()
+    try {
+      await deleteAgent(id)
+      toast("Agent deleted", "error")
+      refresh()
+    } catch (err) {
+      toast(`Failed to delete: ${err}`, "error")
+    }
   }
 
   const handleDuplicate = async (agent: typeof agents[0]) => {
-    const dup = await duplicateAgent(agent)
-    toast(`Duplicated as "${dup.name}"`, "success")
-    refresh()
+    try {
+      const dup = await duplicateAgent(agent)
+      toast(`Duplicated as "${dup.name}"`, "success")
+      refresh()
+    } catch (err) {
+      toast(`Failed to duplicate: ${err}`, "error")
+    }
   }
 
   const recent = [...agents].sort(

@@ -61,15 +61,23 @@ export default function Library() {
   const { toast } = useToast()
 
   const handleDelete = async (id: string) => {
-    await deleteAgent(id)
-    toast("Agent deleted", "error")
-    refresh()
+    try {
+      await deleteAgent(id)
+      toast("Agent deleted", "error")
+      refresh()
+    } catch (err) {
+      toast(`Failed to delete: ${err}`, "error")
+    }
   }
 
   const handleDuplicate = async (agent: typeof agents[0]) => {
-    const dup = await duplicateAgent(agent)
-    toast(`Duplicated as "${dup.name}"`, "success")
-    refresh()
+    try {
+      const dup = await duplicateAgent(agent)
+      toast(`Duplicated as "${dup.name}"`, "success")
+      refresh()
+    } catch (err) {
+      toast(`Failed to duplicate: ${err}`, "error")
+    }
   }
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,7 +162,7 @@ export default function Library() {
           <button className="btn-ghost" onClick={() => fileInputRef.current?.click()} style={{ fontSize: "0.8rem" }}>
             Import .md
           </button>
-          <button className="btn-ghost" onClick={() => { downloadAllAgents(agents); void 0 }} style={{ fontSize: "0.8rem" }}>
+          <button className="btn-ghost" onClick={() => downloadAllAgents(agents)} style={{ fontSize: "0.8rem" }}>
             Export
           </button>
           <button className="btn-gold" onClick={() => navigate("/editor/new")} style={{ fontSize: "0.8rem" }}>

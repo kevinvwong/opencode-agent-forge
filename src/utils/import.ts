@@ -1,4 +1,4 @@
-import type { Agent, AgentPermissions } from "../types/agent.ts"
+import type { Agent } from "../types/agent.ts"
 import { generateId, rollStats } from "../types/agent.ts"
 
 export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent> {
@@ -79,7 +79,7 @@ export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent
     if (frontmatter.top_p) agent.topP = Number(frontmatter.top_p)
     if (frontmatter.steps) agent.steps = Number(frontmatter.steps)
     if (String(frontmatter.hidden) === "true") agent.hidden = true
-    if (String(frontmatter.disable) === "true") agent.disabled = true
+    if (String(frontmatter.disable) === "true" || String(frontmatter.disabled) === "true") agent.disabled = true
     if (frontmatter.color) agent.color = String(frontmatter.color)
 
     if (typeof frontmatter.tags === "string") {
@@ -87,12 +87,10 @@ export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent
     }
 
     if (frontmatter.permission && typeof frontmatter.permission === "object") {
-      const perms: AgentPermissions = {}
-      for (const [k, v] of Object.entries(frontmatter.permission as Record<string, string>)) {
-        const val = v as string
-        if (val === "allow" || val === "ask" || val === "deny") {
-          ;(perms as Record<string, unknown>)[k] = val
-        }
+      const parsed = frontmatter.permission as Record<string, unknown>
+      const perms: Record<string, "allow" | "ask" | "deny"> = {}
+      for (const [k, v] of Object.entries(parsed)) {
+        if (v === "allow" || v === "ask" || v === "deny") perms[k] = v
       }
       agent.permissions = perms
     }

@@ -12,14 +12,14 @@ export default function App() {
   const [seeded, setSeeded] = useState(false)
 
   useEffect(() => {
-    db.agents.count().then((count) => {
-      if (count === 0) {
-        return db.agents.bulkAdd(TEMPLATES).then(() => {
-          setSeeded(true)
-        })
-      }
-      setSeeded(true)
-    })
+    db.agents.count()
+      .then((count) => {
+        if (count === 0) {
+          return db.agents.bulkAdd(TEMPLATES).then(() => setSeeded(true))
+        }
+        setSeeded(true)
+      })
+      .catch(() => setSeeded(true))
   }, [])
 
   if (!seeded) {

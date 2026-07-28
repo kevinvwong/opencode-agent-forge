@@ -4,7 +4,10 @@ import { BrowserRouter } from "react-router-dom"
 import App from "./App.tsx"
 import "./index.css"
 
-createRoot(document.getElementById("app")!).render(
+const rootEl = document.getElementById("app")
+if (!rootEl) throw new Error("Root element #app not found")
+
+createRoot(rootEl).render(
   <StrictMode>
     <BrowserRouter basename="/opencode-agent-forge">
       <App />

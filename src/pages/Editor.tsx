@@ -67,11 +67,15 @@ export default function Editor() {
   const handleSave = async () => {
     if (!agent) return
     setSaving(true)
-    await saveAgent(agent)
+    try {
+      await saveAgent(agent)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+      if (isNew) navigate(`/editor/${agent.id}`, { replace: true })
+    } catch (err) {
+      console.error("Failed to save agent:", err)
+    }
     setSaving(false)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
-    if (isNew) navigate(`/editor/${agent.id}`, { replace: true })
   }
 
   const handleRollStats = () => {
@@ -349,8 +353,8 @@ export default function Editor() {
                 { key: "task", label: "Task", desc: "Resist subagent invocation" },
                 { key: "webfetch", label: "Web Fetch", desc: "Resist external access" },
               ].map(({ key, label, desc }) => {
-                const perms = agent.permissions as Record<string, unknown>
-                const level = perms[key] === "allow" ? "allow" : perms[key] === "ask" ? "ask" : "deny"
+                const levelValue = agent.permissions[key]
+                const level = levelValue === "allow" ? "allow" : levelValue === "ask" ? "ask" : "deny"
                 const color = level === "allow" ? "#16a34a" : level === "ask" ? "#d4a843" : "#6a6a8e"
                 return (
                   <div key={key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.4rem 0.5rem", borderBottom: "1px solid #1a1a2e" }}>
