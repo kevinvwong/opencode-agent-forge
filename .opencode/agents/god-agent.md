@@ -3,6 +3,7 @@ description: Orchestrator that selects the best agent for any task, creates new 
 mode: subagent
 temperature: 0.15
 steps: 15
+color: "#5599ff"
 permission:
   read: allow
   glob: allow
