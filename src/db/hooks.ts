@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { db } from "./schema.ts"
 import type { Agent } from "../types/agent.ts"
 
@@ -6,20 +6,25 @@ export function useAgents() {
   const [agents, setAgents] = useState<Agent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const mountedRef = useRef(true)
 
   const refresh = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
       const all = await db.agents.orderBy("updatedAt").reverse().toArray()
-      setAgents(all)
+      if (mountedRef.current) setAgents(all)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load agents")
+      if (mountedRef.current) setError(err instanceof Error ? err.message : "Failed to load agents")
     }
-    setLoading(false)
+    if (mountedRef.current) setLoading(false)
   }, [])
 
-  useEffect(() => { refresh() }, [refresh])
+  useEffect(() => {
+    mountedRef.current = true
+    refresh()
+    return () => { mountedRef.current = false }
+  }, [refresh])
 
   return { agents, loading, error, refresh }
 }
@@ -30,18 +35,18 @@ export function useAgent(id: string | undefined) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    let cancelled = false
     if (!id) { setLoading(false); return }
     setLoading(true)
     setError(null)
     db.agents.get(id)
       .then((a) => {
-        setAgent(a ?? null)
-        setLoading(false)
+        if (!cancelled) { setAgent(a ?? null); setLoading(false) }
       })
       .catch((err) => {
-        setError(err instanceof Error ? err.message : "Failed to load agent")
-        setLoading(false)
+        if (!cancelled) { setError(err instanceof Error ? err.message : "Failed to load agent"); setLoading(false) }
       })
+    return () => { cancelled = true }
   }, [id])
 
   return { agent, loading, error }

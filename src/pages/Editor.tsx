@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import type { Agent, AgentPermissions, DnDStats } from "../types/agent.ts"
 import { generateId, rollStats, MODE_CLASS_MAP } from "../types/agent.ts"
@@ -19,6 +19,15 @@ export default function Editor() {
   const [saved, setSaved] = useState(false)
   const [activeTab, setActiveTab] = useState<string>("character")
   const [showRoll, setShowRoll] = useState(false)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const rollTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+      if (rollTimerRef.current) clearTimeout(rollTimerRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     if (isNew) {
@@ -70,7 +79,7 @@ export default function Editor() {
     try {
       await saveAgent(agent)
       setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      saveTimerRef.current = setTimeout(() => setSaved(false), 3000)
       if (isNew) navigate(`/editor/${agent.id}`, { replace: true })
     } catch (err) {
       console.error("Failed to save agent:", err)
@@ -80,10 +89,9 @@ export default function Editor() {
 
   const handleRollStats = () => {
     setShowRoll(true)
-    setTimeout(() => {
-      if (agent) {
-        setAgent({ ...agent, dndStats: rollStats() })
-      }
+    const freshStats = rollStats()
+    rollTimerRef.current = setTimeout(() => {
+      setAgent((prev) => prev ? { ...prev, dndStats: freshStats } : prev)
       setShowRoll(false)
     }, 600)
   }
