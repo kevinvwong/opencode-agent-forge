@@ -28,8 +28,8 @@ body {
   background: var(--color-bg-deep);
   color: var(--color-text);
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.4;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -37,7 +37,7 @@ body {
 .card, .sheet-panel {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 5px;
   transition: border-color 0.12s;
 }
 .card:hover {
@@ -56,10 +56,10 @@ body {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  padding: 0.4rem 0.875rem;
-  border-radius: 5px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
   border: none;
   cursor: pointer;
   transition: all 0.1s;
@@ -94,11 +94,11 @@ body {
   background: transparent;
   color: var(--color-text-secondary);
   border: 1px solid var(--color-border);
-  padding: 0.4rem 0.875rem;
-  border-radius: 5px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.1s;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 .btn-ghost:hover:not(:disabled) {
@@ -112,11 +112,11 @@ body {
   background: var(--color-bg-deep);
   border: 1px solid var(--color-border);
   color: var(--color-text);
-  padding: 0.4rem 0.65rem;
-  border-radius: 5px;
+  padding: 0.35rem 0.55rem;
+  border-radius: 4px;
   outline: none;
   transition: border-color 0.12s;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-family: var(--font-sans);
   width: 100%;
 }
@@ -130,8 +130,8 @@ body {
 textarea.field, textarea.textarea-field {
   resize: vertical;
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  min-height: 80px;
+  font-size: 0.75rem;
+  min-height: 60px;
   background: var(--color-bg-deep);
   border: 1px solid var(--color-border);
   color: var(--color-text);
@@ -189,12 +189,12 @@ select.field, select.input-field {
 .tab {
   background: none;
   border: none;
-  padding: 0.45rem 0.875rem;
+  padding: 0.35rem 0.7rem;
   color: var(--color-text-muted);
   border-bottom: 1.5px solid transparent;
   cursor: pointer;
   font-family: var(--font-sans);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 500;
   transition: all 0.1s;
 }
@@ -252,13 +252,13 @@ select.field, select.input-field {
   overflow: hidden;
 }
 .menu-item {
-  padding: 0.35rem 0.75rem;
+  padding: 0.3rem 0.65rem;
   cursor: pointer;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: background 0.08s;
   border-bottom: 1px solid var(--color-border);
 }
