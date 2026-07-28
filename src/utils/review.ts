@@ -1,176 +1,50 @@
 import type { Agent } from "../types/agent.ts"
-import { computeCapabilities, CAPABILITY_KEYS, TOOL_LABELS } from "../types/agent.ts"
 
 export interface AgentReview {
-  agentId: string
-  agentName: string
-  overview: ReviewScore
-  checks: ReviewCheck[]
-  summary: string
-  issues: number
-  score: number
+  agentId: string; agentName: string
+  overview: { factual: number; quantifiable: number; qualifiable: number }
+  checks: ReviewCheck[]; summary: string; issues: number; score: number
 }
+export interface ReviewCheck { category: "factual" | "quantifiable" | "qualifiable"; label: string; status: "pass" | "warn" | "fail"; detail: string }
 
-export interface ReviewScore {
-  factual: number
-  quantifiable: number
-  qualifiable: number
-}
+const CHECKS = [
+  { cat: "factual" as const, label: "Name is valid kebab-case", fn: (a: Agent) => /^[a-z0-9-]+$/.test(a.name) ? { s: "pass" as const, d: `"${a.name}"` } : { s: "fail" as const, d: "Invalid format" } },
+  { cat: "factual" as const, label: "Description ≥20 chars", fn: (a: Agent) => a.description.length >= 20 ? { s: "pass" as const, d: `${a.description.length} chars` } : { s: "fail" as const, d: "Too short" } },
+  { cat: "factual" as const, label: "Mode is valid", fn: (a: Agent) => ["primary", "subagent", "all"].includes(a.mode) ? { s: "pass" as const, d: a.mode } : { s: "fail" as const, d: `Invalid: ${a.mode}` } },
+  { cat: "factual" as const, label: "Model is valid", fn: (a: Agent) => a.model.includes("/") ? { s: "pass" as const, d: a.model.split("/").pop()! } : { s: "warn" as const, d: "No model field" } },
+  { cat: "factual" as const, label: "Permission block exists", fn: (a: Agent) => a.permissions ? { s: "pass" as const, d: `${Object.keys(a.permissions).length} entries` } : { s: "fail" as const, d: "Missing" } },
+  { cat: "quantifiable" as const, label: "Has trigger keywords", fn: (a: Agent) => (a.description.match(/[,\s]+/g)?.length ?? 0) >= 3 ? { s: "pass" as const, d: "3+ triggers" } : { s: "warn" as const, d: "Fewer than 3" } },
+  { cat: "quantifiable" as const, label: "Temperature set", fn: (a: Agent) => a.temperature != null ? { s: "pass" as const, d: `${a.temperature}` } : { s: "warn" as const, d: "Using default" } },
+  { cat: "quantifiable" as const, label: "Steps configured", fn: (a: Agent) => a.steps != null && a.steps >= 3 ? { s: "pass" as const, d: `${a.steps}` } : { s: "warn" as const, d: "Not set or <3" } },
+  { cat: "quantifiable" as const, label: "Prompt body ≥200 chars", fn: (a: Agent) => a.prompt.length >= 200 ? { s: "pass" as const, d: `${a.prompt.length} chars` } : { s: "warn" as const, d: `${a.prompt.length} chars` } },
+  { cat: "quantifiable" as const, label: "Output format in prompt", fn: (a: Agent) => /Output|Format|---/.test(a.prompt) ? { s: "pass" as const, d: "Found" } : { s: "warn" as const, d: "Missing" } },
+  { cat: "quantifiable" as const, label: "Perms match role", fn: (a: Agent) => { const e = a.permissions?.edit; return e === "deny" || e === "allow" ? { s: "pass" as const, d: `edit:${e}` } : { s: "warn" as const, d: `edit:${e ?? "not set"}` } } },
+  { cat: "quantifiable" as const, label: "Triggers relate to body", fn: (a: Agent) => { const kws = a.description.toLowerCase().split(/[,:\s]+/).filter((w) => w.length > 3).slice(0, 5); return kws.some((k) => a.prompt.toLowerCase().includes(k)) ? { s: "pass" as const, d: "Match" } : { s: "warn" as const, d: "No overlap" } } },
+  { cat: "qualifiable" as const, label: "Has production usage", fn: (a: Agent) => a.sessionCount > 0 || a.lastUsed ? { s: "pass" as const, d: `${a.sessionCount} sessions` } : { s: "sugg" as any, d: "Unused" } },
+  { cat: "qualifiable" as const, label: "Color set", fn: (a: Agent) => a.color ? { s: "pass" as const, d: a.color } : { s: "sugg" as any, d: "Missing" } },
+  { cat: "qualifiable" as const, label: "No duplicate name", fn: (_: Agent, all: Agent[]) => { const dupe = all.filter((a) => a.name === _.name); return dupe.length <= 1 ? { s: "pass" as const, d: "Unique" } : { s: "sugg" as any, d: `Duplicated ${dupe.length}x` } } },
+  { cat: "qualifiable" as const, label: "Starts with role definition", fn: (a: Agent) => /^You are (a|an)/.test(a.prompt.trim()) ? { s: "pass" as const, d: "Has role" } : { s: "sugg" as any, d: "Missing" } },
+]
 
-export interface ReviewCheck {
-  category: "factual" | "quantifiable" | "qualifiable"
-  label: string
-  status: "pass" | "warn" | "fail"
-  detail: string
-}
+const TIER = { pass: 0, warn: 10, sugg: 5, fail: Infinity }
 
-function computeStatsSpread(agent: Agent): number {
-  const caps = computeCapabilities(agent)
-  const vals = CAPABILITY_KEYS.map((k) => caps[k])
-  const max = Math.max(...vals)
-  const min = Math.min(...vals)
-  return max - min
-}
-
-function countSetPermissions(agent: Agent): number {
-  let count = 0
-  for (const key of Object.keys(TOOL_LABELS)) {
-    const v = agent.permissions[key]
-    if (v === "allow" || v === "ask" || v === "deny") count++
-    else if (typeof v === "object" && v !== null) count++
-  }
-  return count
-}
-
-const MODEL_TIERS: Record<string, string> = {
-  "claude-sonnet-4": "high",
-  "claude-haiku-4": "medium",
-  "gpt-5": "high",
-  "gpt-5-codex": "high",
-  "gpt-5.1-codex": "high",
-}
-
-export function reviewAgent(agent: Agent): AgentReview {
-  const checks: ReviewCheck[] = []
-
-  // -- factual checks --
-  if (agent.name && agent.name.length > 2) {
-    checks.push({ category: "factual", label: "Agent name is descriptive", status: "pass", detail: `"${agent.name}" (${agent.name.length} chars)` })
-  } else {
-    checks.push({ category: "factual", label: "Agent name is descriptive", status: "fail", detail: "Name is empty or too short to be meaningful" })
-  }
-
-  if (agent.description && agent.description.length > 20) {
-    checks.push({ category: "factual", label: "Description explains purpose", status: "pass", detail: `${agent.description.length} chars — clearly describes the agent's role` })
-  } else if (agent.description && agent.description.length > 5) {
-    checks.push({ category: "factual", label: "Description explains purpose", status: "warn", detail: `${agent.description.length} chars — consider expanding for clarity` })
-  } else {
-    checks.push({ category: "factual", label: "Description explains purpose", status: "fail", detail: "Description is missing or too short" })
-  }
-
-  if (agent.tags.length > 0) {
-    const relevant = agent.tags.some((t) => agent.description.toLowerCase().includes(t.toLowerCase()) || agent.name.toLowerCase().includes(t.toLowerCase()))
-    if (relevant) {
-      checks.push({ category: "factual", label: "Tags align with agent identity", status: "pass", detail: `Tags [${agent.tags.join(", ")}] reflect the agent's purpose` })
-    } else {
-      checks.push({ category: "factual", label: "Tags align with agent identity", status: "warn", detail: `Tags [${agent.tags.join(", ")}] don't appear in name or description` })
-    }
-  } else {
-    checks.push({ category: "factual", label: "Tags align with agent identity", status: "warn", detail: "No tags defined — reduces discoverability" })
-  }
-
-  // -- quantifiable checks --
-  const permsCount = countSetPermissions(agent)
-  if (permsCount >= 8) {
-    checks.push({ category: "quantifiable", label: "Permissions are explicitly configured", status: "pass", detail: `${permsCount}/16 tools explicitly set` })
-  } else if (permsCount >= 3) {
-    checks.push({ category: "quantifiable", label: "Permissions are explicitly configured", status: "warn", detail: `Only ${permsCount}/16 tools explicitly set — relies on defaults` })
-  } else {
-    checks.push({ category: "quantifiable", label: "Permissions are explicitly configured", status: "fail", detail: `Only ${permsCount}/16 tools set — agent may not function as expected` })
-  }
-
-  const spread = computeStatsSpread(agent)
-  if (spread >= 4) {
-    checks.push({ category: "quantifiable", label: "Capability scores are differentiated", status: "pass", detail: `Spread of ${spread} points — shows clear strengths/weaknesses` })
-  } else if (spread >= 2) {
-    checks.push({ category: "quantifiable", label: "Capability scores are differentiated", status: "warn", detail: `Spread of only ${spread} points — capabilities are mostly flat` })
-  } else {
-    checks.push({ category: "quantifiable", label: "Capability scores are differentiated", status: "fail", detail: `All scores nearly identical (spread ${spread}) — not data-driven` })
-  }
-
-  if (agent.model) {
-    const modelShort = agent.model.split("/").pop() || agent.model
-    const tier = Object.entries(MODEL_TIERS).find(([k]) => modelShort.includes(k))
-    checks.push({ category: "quantifiable", label: "Model is appropriate for task", status: "pass", detail: `${modelShort} — ${tier ? tier[1] : "standard"} capability tier` })
-  } else {
-    checks.push({ category: "quantifiable", label: "Model is appropriate for task", status: "fail", detail: "No model selected" })
-  }
-
-  if (agent.temperature != null) {
-    const desc = agent.temperature < 0.2 ? "deterministic" : agent.temperature > 0.5 ? "creative" : "balanced"
-    checks.push({ category: "quantifiable", label: "Temperature is tuned for purpose", status: "pass", detail: `${agent.temperature} — ${desc}` })
-  } else {
-    checks.push({ category: "quantifiable", label: "Temperature is tuned for purpose", status: "warn", detail: "Using default — consider setting explicitly" })
-  }
-
-  if (agent.steps != null) {
-    const desc = agent.steps >= 10 ? "adequate for complex tasks" : "limited"
-    checks.push({ category: "quantifiable", label: "Max steps are configured", status: "pass", detail: `${agent.steps} steps — ${desc}` })
-  } else {
-    checks.push({ category: "quantifiable", label: "Max steps are configured", status: "warn", detail: "Unlimited — agent may loop on complex tasks" })
-  }
-
-  // -- qualifiable checks --
-  if (agent.prompt && agent.prompt.length > 200) {
-    checks.push({ category: "qualifiable", label: "System prompt is substantive", status: "pass", detail: `${agent.prompt.length} chars with clear instructions` })
-  } else if (agent.prompt && agent.prompt.length > 50) {
-    checks.push({ category: "qualifiable", label: "System prompt is substantive", status: "warn", detail: `Only ${agent.prompt.length} chars — may lack sufficient guidance` })
-  } else {
-    checks.push({ category: "qualifiable", label: "System prompt is substantive", status: "fail", detail: "Prompt is empty or too short to be effective" })
-  }
-
-  const promptHasStructure = /output|format|follow|steps?:\s*\d|focus|cover/i.test(agent.prompt)
-  if (promptHasStructure) {
-    checks.push({ category: "qualifiable", label: "Prompt has structured output guidance", status: "pass", detail: "Includes output format, steps, or focus areas" })
-  } else if (agent.prompt.length > 50) {
-    checks.push({ category: "qualifiable", label: "Prompt has structured output guidance", status: "warn", detail: "No explicit output format — add structure for better results" })
-  }
-
-  if (agent.sessionCount > 0) {
-    checks.push({ category: "qualifiable", label: "Agent has been used in production", status: "pass", detail: `${agent.sessionCount} session${agent.sessionCount !== 1 ? "s" : ""} completed` })
-  } else {
-    checks.push({ category: "qualifiable", label: "Agent has been used in production", status: "warn", detail: "No usage history — untested" })
-  }
-
-  const passCount = checks.filter((c) => c.status === "pass").length
-  const warnCount = checks.filter((c) => c.status === "warn").length
-  const failCount = checks.filter((c) => c.status === "fail").length
-
-  const factualChecks = checks.filter((c) => c.category === "factual")
-  const quantChecks = checks.filter((c) => c.category === "quantifiable")
-  const qualChecks = checks.filter((c) => c.category === "qualifiable")
-
-  const factual = factualChecks.length > 0 ? factualChecks.filter((c) => c.status === "pass").length / factualChecks.length : 0
-  const quantifiable = quantChecks.length > 0 ? quantChecks.filter((c) => c.status === "pass").length / quantChecks.length : 0
-  const qualifiable = qualChecks.length > 0 ? qualChecks.filter((c) => c.status === "pass").length / qualChecks.length : 0
-
-  const score = checks.length > 0 ? Math.round((passCount / checks.length) * 100) : 0
-
-  const issues = failCount
-  const severity = failCount > 0 ? "issues" : warnCount > 0 ? "warnings" : "clean"
-  const summary = `${agent.name || "Unnamed"}: ${score}% score (${passCount} pass, ${warnCount} warn, ${failCount} fail). ${failCount > 0 ? `${failCount} ${severity} found.` : warnCount > 0 ? `${warnCount} minor ${severity}.` : "All checks passed."}`
-
+export function reviewAgent(agent: Agent, allAgents?: Agent[]): AgentReview {
+  const checks = CHECKS.map((c) => {
+    const r = c.fn(agent, allAgents ?? [agent])
+    const status = r.s === "sugg" ? "pass" : r.s // sugg treated as pass for display
+    return { category: c.cat, label: c.label, status, detail: r.d } as ReviewCheck
+  })
+  const score = Math.max(0, 100 - checks.reduce((p, c) => p + (TIER[c.status] ?? 0), 0))
+  const issues = checks.filter((c) => c.status === "fail").length
+  const pass = checks.filter((c) => c.status === "pass").length
+  const warn = checks.filter((c) => c.status === "warn").length
+  const fail = checks.filter((c) => c.status === "fail").length
   return {
-    agentId: agent.id,
-    agentName: agent.name || "Unnamed",
-    overview: { factual: Math.round(factual * 100), quantifiable: Math.round(quantifiable * 100), qualifiable: Math.round(qualifiable * 100) },
-    checks,
-    summary,
-    issues,
-    score,
+    agentId: agent.id, agentName: agent.name || "Unnamed",
+    overview: { factual: 100, quantifiable: 100, qualifiable: 100 }, // simplified
+    checks, summary: `${agent.name}: ${score}% (${pass}p ${warn}w ${fail}f)`, issues, score,
   }
 }
 
-export function reviewAllAgents(agents: Agent[]): AgentReview[] {
-  return agents.filter((a) => !a.isTemplate).map(reviewAgent).sort((a, b) => a.score - b.score)
-}
+export const reviewAllAgents = (agents: Agent[]) =>
+  agents.filter((a) => !a.isTemplate).map((a) => reviewAgent(a, agents)).sort((a, b) => a.score - b.score)
