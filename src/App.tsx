@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard.tsx"
 import Library from "./pages/Library.tsx"
 import Editor from "./pages/Editor.tsx"
 import Router from "./pages/Router.tsx"
+import GodAgent from "./pages/GodAgent.tsx"
 import { db } from "./db/schema.ts"
 import { TEMPLATES } from "./data/templates.ts"
 
@@ -36,6 +37,7 @@ export default function App() {
       <Layout>
         <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/god" element={<GodAgent />} />
         <Route path="/router" element={<Router />} />
         <Route path="/library" element={<Library />} />
         <Route path="/editor/:id" element={<Editor />} />
