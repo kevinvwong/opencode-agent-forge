@@ -34,31 +34,30 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
     return (
       <div
         onClick={handleClick}
+        className="card"
         style={{
-          display: "flex", alignItems: "center", gap: 12, padding: "0.6rem 0.75rem",
-          background: "linear-gradient(135deg, #1a1a2e 0%, #16162a 100%)",
-          border: "1px solid #2a2a4e", borderLeft: `3px solid ${modeColor}`, borderRadius: 6,
-          cursor: "pointer", transition: "all 0.15s",
+          display: "flex", alignItems: "center", gap: 12, padding: "0.55rem 0.75rem",
+          borderLeft: `3px solid ${modeColor}`, cursor: "pointer",
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.borderColor = modeColor; e.currentTarget.style.boxShadow = `0 0 12px ${modeColor}30` }}
-        onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2a2a4e"; e.currentTarget.style.boxShadow = "none" }}
+        onMouseEnter={(e) => { e.currentTarget.style.borderColor = modeColor }}
+        onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-border)" }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontWeight: 600, color: "#e2dcc8", fontSize: "0.9rem" }}>{agent.name || "Unnamed"}</span>
-            <span style={{ fontSize: "0.6rem", color: modeColor, border: `1px solid ${modeColor}`, borderRadius: 3, padding: "0 4px" }}>{modeLabel}</span>
-            {agent.isTemplate && <span style={{ fontSize: "0.55rem", color: "#8a8aae" }}>TEMPLATE</span>}
+            <span style={{ fontWeight: 600, color: "var(--color-text)", fontSize: "0.875rem" }}>{agent.name || "Unnamed"}</span>
+            <span className="mode-badge" style={{ color: modeColor, border: `1px solid ${modeColor}50` }}>{modeLabel}</span>
+            {agent.isTemplate && <span style={{ fontSize: "0.55rem", color: "var(--color-text-muted)" }}>TEMPLATE</span>}
           </div>
-          <div style={{ fontSize: "0.7rem", color: "#8a8aae", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <div style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {agent.description}
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0, fontSize: "0.7rem", color: "#6a6a8e" }}>
-          <span title={`Session capacity: ${metrics.sessionCapacity}`}>❤{metrics.sessionCapacity}</span>
-          <span title={`Allow: ${perms.allow} | Ask: ${perms.ask} | Deny: ${perms.deny}`}>
-            <span style={{ color: "#16a34a" }}>●{perms.allow}</span>
-            <span style={{ color: "#d4a843", margin: "0 3px" }}>●{perms.ask}</span>
-            <span style={{ color: "#6a6a8e" }}>●{perms.deny}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0, fontSize: "0.7rem", color: "var(--color-text-muted)" }}>
+          <span className="metric" style={{ color: "var(--color-danger)" }}>❤{metrics.sessionCapacity}</span>
+          <span className="metric" title={`Allow: ${perms.allow} | Ask: ${perms.ask} | Deny: ${perms.deny}`}>
+            <span style={{ color: "var(--color-success)" }}>●{perms.allow}</span>
+            <span style={{ color: "var(--color-accent)", margin: "0 2px" }}>●{perms.ask}</span>
+            <span style={{ color: "var(--color-text-muted)" }}>●{perms.deny}</span>
           </span>
         </div>
       </div>
@@ -68,33 +67,33 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
   return (
     <div
       onClick={handleClick}
+      className="card-elevated"
       style={{
-        borderRadius: 8, overflow: "hidden", cursor: "pointer", transition: "all 0.2s",
-        border: `1px solid #2a2a4e`, background: "linear-gradient(180deg, #1a1a2e 0%, #12121e 100%)",
+        cursor: "pointer", overflow: "hidden",
         display: "flex", flexDirection: "column", position: "relative",
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = modeColor; e.currentTarget.style.boxShadow = `0 0 20px ${modeColor}30` }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2a2a4e"; e.currentTarget.style.boxShadow = "none" }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = modeColor; e.currentTarget.style.boxShadow = `0 0 24px ${modeColor}20` }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-border)"; e.currentTarget.style.boxShadow = "none" }}
     >
-      <div style={{ background: `linear-gradient(135deg, ${modeColor} 0%, ${modeColor}aa 100%)`, padding: "0.6rem 0.75rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{
+        background: `linear-gradient(135deg, ${modeColor} 0%, ${modeColor}cc 100%)`,
+        padding: "0.6rem 0.75rem", display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
         <div>
           <div style={{ fontWeight: 700, color: "#fff", fontSize: "0.95rem", lineHeight: 1.2 }}>
             {agent.name || "Unnamed Agent"}
           </div>
-          <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.7)", display: "flex", gap: 6 }}>
-            <span>{modeLabel} Agent</span>
+          <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.7)" }}>
+            {modeLabel} Agent
           </div>
         </div>
         <div style={{ position: "relative" }}>
           <button
             onClick={(e) => { e.stopPropagation(); setMenuOpen(!menuOpen) }}
-            style={{ background: "rgba(0,0,0,0.3)", border: "none", color: "#fff", width: 28, height: 28, borderRadius: 4, cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}
+            style={{ background: "rgba(0,0,0,0.25)", border: "none", color: "#fff", width: 28, height: 28, borderRadius: 5, cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}
           >⋯</button>
           {menuOpen && (
-            <div
-              style={{ position: "absolute", right: 0, top: 32, zIndex: 10, background: "#1a1a2e", border: "1px solid #3a3a5e", borderRadius: 6, minWidth: 140, boxShadow: "0 4px 20px rgba(0,0,0,0.4)" }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="menu-panel" style={{ position: "absolute", right: 0, top: 34, zIndex: 10, minWidth: 140 }} onClick={(e) => e.stopPropagation()}>
               {[
                 { label: "Edit", icon: "✎", fn: () => navigate(`/editor/${agent.id}`) },
                 { label: "Export .md", icon: "⬇", fn: () => downloadAgentFile(agent) },
@@ -104,14 +103,7 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
                 <div
                   key={item.label}
                   onClick={(e) => handleAction(e, item.fn)}
-                  style={{
-                    padding: "0.4rem 0.75rem", cursor: "pointer", fontSize: "0.8rem",
-                    color: "danger" in item && item.danger ? "#e74c3c" : "#c8c0b0",
-                    display: "flex", alignItems: "center", gap: 8,
-                    borderBottom: "1px solid #2a2a4e", transition: "background 0.1s",
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "rgba(212,168,67,0.08)"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  className={`menu-item${"danger" in item && item.danger ? " danger" : ""}`}
                 >
                   <span style={{ fontSize: "0.7rem" }}>{item.icon}</span>
                   <span>{item.label}</span>
@@ -123,7 +115,7 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
       </div>
 
       <div style={{ padding: "0.6rem 0.75rem", flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-        <div style={{ fontSize: "0.72rem", color: "#9a9290", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+        <div style={{ fontSize: "0.72rem", color: "var(--color-text-secondary)", lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
           {agent.description}
         </div>
 
@@ -136,18 +128,16 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
             return (
               <div key={k} style={{ display: "flex", alignItems: "center", gap: 6 }}
                 title={`${CAPABILITY_LABELS[k]}: ${score} (${mod >= 0 ? "+" : ""}${mod})`}>
-                <span style={{ fontSize: "0.55rem", fontWeight: 700, color: CAPABILITY_COLORS[k], minWidth: 28, letterSpacing: 0.5 }}>
+                <span style={{ fontSize: "0.55rem", fontWeight: 700, color: CAPABILITY_COLORS[k], minWidth: 26, letterSpacing: 0.5 }}>
                   {CAPABILITY_LABELS[k]}
                 </span>
-                <div style={{ flex: 1, height: 8, background: "rgba(255,255,255,0.05)", borderRadius: 4, overflow: "hidden", position: "relative" }}>
-                  <div style={{
-                    width: `${pct}%`, height: "100%", borderRadius: 4,
-                    background: "linear-gradient(90deg, #dc2626 0%, #ea580c 33%, #d4a843 66%, #16a34a 100%)",
-                    transition: "width 0.3s",
-                    boxShadow: isHighest ? "0 0 6px rgba(212,168,67,0.5)" : "none",
+                <div className="progress-track" style={{ flex: 1, height: 7 }}>
+                  <div className="progress-fill" style={{
+                    width: `${pct}%`,
+                    boxShadow: isHighest ? "0 0 6px rgba(245,158,11,0.4)" : "none",
                   }} />
                 </div>
-                <span style={{ fontSize: "0.55rem", color: "#6a6a8e", fontFamily: "var(--font-mono)", minWidth: 22, textAlign: "right" }}>
+                <span style={{ fontSize: "0.55rem", color: "var(--color-text-muted)", fontFamily: "var(--font-mono)", minWidth: 20, textAlign: "right" }}>
                   {mod >= 0 ? "+" : ""}{mod}
                 </span>
               </div>
@@ -156,33 +146,30 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
         </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 4 }}>
-          <div style={{ display: "flex", gap: 6, fontSize: "0.65rem" }}>
-            <span style={{ color: "#ef4444" }}>❤{metrics.sessionCapacity}</span>
-            <span style={{ color: "#60a5fa" }}>🛡{metrics.securityRating}</span>
-            <span style={{ color: "#fbbf24" }}>⚡{metrics.responsiveness >= 0 ? "+" : ""}{metrics.responsiveness}</span>
-            <span style={{ color: "#a78bfa" }}>⤒+{metrics.proficiency}</span>
+          <div style={{ display: "flex", gap: 5, fontSize: "0.65rem" }}>
+            <span className="metric" style={{ color: "var(--color-danger)" }}>❤{metrics.sessionCapacity}</span>
+            <span className="metric" style={{ color: "#60a5fa" }}>🛡{metrics.securityRating}</span>
+            <span className="metric" style={{ color: "var(--color-accent)" }}>⚡{metrics.responsiveness >= 0 ? "+" : ""}{metrics.responsiveness}</span>
+            <span className="metric" style={{ color: "#a78bfa" }}>⤒+{metrics.proficiency}</span>
           </div>
           <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#16a34a", display: perms.allow > 0 ? "inline-block" : "none" }} />
-            <span style={{ fontSize: "0.6rem", color: perms.allow > 0 ? "#16a34a" : "#4a4a6e" }}>{perms.allow}</span>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#d4a843", display: perms.ask > 0 ? "inline-block" : "none" }} />
-            <span style={{ fontSize: "0.6rem", color: perms.ask > 0 ? "#d4a843" : "#4a4a6e" }}>{perms.ask}</span>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#6a6a8e", display: perms.deny > 0 ? "inline-block" : "none" }} />
-            <span style={{ fontSize: "0.6rem", color: perms.deny > 0 ? "#6a6a8e" : "#4a4a6e" }}>{perms.deny}</span>
+            <span className="proficiency-dot filled" style={{ width: 7, height: 7, display: perms.allow > 0 ? "inline-block" : "none" }} />
+            <span style={{ fontSize: "0.6rem", color: perms.allow > 0 ? "var(--color-success)" : "var(--color-text-muted)" }}>{perms.allow}</span>
+            <span className="proficiency-dot" style={{ width: 7, height: 7, background: "var(--color-accent)", borderColor: "var(--color-accent)", display: perms.ask > 0 ? "inline-block" : "none" }} />
+            <span style={{ fontSize: "0.6rem", color: perms.ask > 0 ? "var(--color-accent)" : "var(--color-text-muted)" }}>{perms.ask}</span>
+            <span style={{ fontSize: "0.6rem", color: "var(--color-text-muted)" }}>{perms.deny}</span>
           </div>
         </div>
 
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", alignItems: "center" }}>
           {agent.tags.slice(0, 3).map((t) => (
-            <span key={t} style={{ fontSize: "0.55rem", background: "rgba(255,255,255,0.04)", color: "#7a7a9e", padding: "1px 5px", borderRadius: 3 }}>
-              #{t}
-            </span>
+            <span key={t} className="tag">#{t}</span>
           ))}
           {agent.tags.length > 3 && (
-            <span style={{ fontSize: "0.5rem", color: "#5a5a7e" }}>+{agent.tags.length - 3}</span>
+            <span style={{ fontSize: "0.5rem", color: "var(--color-text-muted)" }}>+{agent.tags.length - 3}</span>
           )}
           <div style={{ marginLeft: "auto" }}>
-            <span style={{ fontSize: "0.5rem", color: "#5a5a7e", fontFamily: "var(--font-mono)", background: "rgba(255,255,255,0.03)", padding: "1px 5px", borderRadius: 3 }}>
+            <span style={{ fontSize: "0.5rem", color: "var(--color-text-muted)", fontFamily: "var(--font-mono)" }}>
               {agent.model.split("/").pop()}
             </span>
           </div>

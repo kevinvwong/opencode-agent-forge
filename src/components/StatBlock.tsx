@@ -12,19 +12,18 @@ export default function StatBlock({ capabilities }: Props) {
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       {CAPABILITY_KEYS.map((key) => {
         const score = capabilities[key]
-  const pct = Math.round((score / 18) * 100)
-    const mod = capModifier(score)
-    const modStr = mod >= 0 ? `+${mod}` : `${mod}`
+        const pct = Math.round((score / 18) * 100)
+        const mod = capModifier(score)
+        const modStr = mod >= 0 ? `+${mod}` : `${mod}`
         const isHighest = key === highest
 
         return (
           <div
             key={key}
+            className="card"
             style={{
-              padding: "5px 8px",
-              borderRadius: 6,
-              background: isHighest ? `${CAPABILITY_COLORS[key]}10` : "rgba(255,255,255,0.02)",
-              border: isHighest ? `1px solid ${CAPABILITY_COLORS[key]}30` : "1px solid transparent",
+              padding: "6px 10px",
+              borderColor: isHighest ? `${CAPABILITY_COLORS[key]}40` : undefined,
             }}
             title={`${CAPABILITY_FULL[key]}: ${score}/18`}
           >
@@ -33,35 +32,19 @@ export default function StatBlock({ capabilities }: Props) {
                 <span style={{ fontSize: "0.7rem", fontWeight: 700, color: CAPABILITY_COLORS[key], letterSpacing: 0.5, minWidth: 32 }}>
                   {CAPABILITY_LABELS[key]}
                 </span>
-                <span style={{ fontSize: "0.6rem", color: "#6a6a8e" }}>
+                <span style={{ fontSize: "0.6rem", color: "var(--color-text-muted)" }}>
                   {CAPABILITY_FULL[key]}
                 </span>
               </div>
-              <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "#8a8aae", fontFamily: "var(--font-mono)" }}>
+              <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)" }}>
                 {modStr}
               </span>
             </div>
-            <div style={{ position: "relative", height: 10, background: "rgba(255,255,255,0.05)", borderRadius: 5, overflow: "hidden" }}>
-              <div
-                style={{
-                  width: `${pct}%`,
-                  height: "100%",
-                  borderRadius: 5,
-                  background: "linear-gradient(90deg, #dc2626 0%, #ea580c 33%, #d4a843 66%, #16a34a 100%)",
-                  transition: "width 0.4s ease",
-                  boxShadow: isHighest ? "0 0 8px rgba(212,168,67,0.5)" : "none",
-                }}
-              />
-              <div
-                style={{
-                  position: "absolute", right: 4, top: 0, height: "100%",
-                  display: "flex", alignItems: "center",
-                  fontSize: "0.5rem", fontWeight: 700, color: "rgba(255,255,255,0.7)",
-                  fontFamily: "var(--font-mono)",
-                }}
-              >
-                {score}
-              </div>
+            <div className="progress-track" style={{ height: 10 }}>
+              <div className="progress-fill" style={{
+                width: `${pct}%`,
+                boxShadow: isHighest ? "0 0 8px rgba(245,158,11,0.4)" : "none",
+              }} />
             </div>
           </div>
         )
