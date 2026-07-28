@@ -5,13 +5,6 @@ interface Props {
   capabilities: AgentCapabilities
 }
 
-function heatColor(score: number): string {
-  if (score >= 15) return "#16a34a"
-  if (score >= 12) return "#d4a843"
-  if (score >= 9) return "#ea580c"
-  return "#dc2626"
-}
-
 export default function StatBlock({ capabilities }: Props) {
   const highest = getHighestCapability(capabilities)
 
@@ -19,10 +12,9 @@ export default function StatBlock({ capabilities }: Props) {
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       {CAPABILITY_KEYS.map((key) => {
         const score = capabilities[key]
-        const pct = Math.round((score / 18) * 100)
-        const mod = capModifier(score)
-        const modStr = mod >= 0 ? `+${mod}` : `${mod}`
-        const color = heatColor(score)
+  const pct = Math.round((score / 18) * 100)
+    const mod = capModifier(score)
+    const modStr = mod >= 0 ? `+${mod}` : `${mod}`
         const isHighest = key === highest
 
         return (
@@ -45,7 +37,7 @@ export default function StatBlock({ capabilities }: Props) {
                   {CAPABILITY_FULL[key]}
                 </span>
               </div>
-              <span style={{ fontSize: "0.7rem", fontWeight: 600, color: color, fontFamily: "var(--font-mono)" }}>
+              <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "#8a8aae", fontFamily: "var(--font-mono)" }}>
                 {modStr}
               </span>
             </div>
@@ -55,9 +47,9 @@ export default function StatBlock({ capabilities }: Props) {
                   width: `${pct}%`,
                   height: "100%",
                   borderRadius: 5,
-                  background: `linear-gradient(90deg, ${color}99, ${color})`,
+                  background: "linear-gradient(90deg, #dc2626 0%, #ea580c 33%, #d4a843 66%, #16a34a 100%)",
                   transition: "width 0.4s ease",
-                  boxShadow: isHighest ? `0 0 8px ${color}60` : "none",
+                  boxShadow: isHighest ? "0 0 8px rgba(212,168,67,0.5)" : "none",
                 }}
               />
               <div

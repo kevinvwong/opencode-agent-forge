@@ -116,7 +116,6 @@ export default function Dashboard() {
             {CAPABILITY_KEYS.map((key) => {
               const val = avgCaps[key]
               const pct = Math.round((val / 18) * 100)
-              const color = val >= 15 ? "#16a34a" : val >= 12 ? "#d4a843" : val >= 9 ? "#ea580c" : "#dc2626"
               return (
                 <div key={key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: "0.6rem", fontWeight: 700, color: CAPABILITY_COLORS[key], minWidth: 30, letterSpacing: 0.5 }}>
@@ -125,13 +124,10 @@ export default function Dashboard() {
                   <div style={{ flex: 1, height: 10, background: "rgba(255,255,255,0.04)", borderRadius: 5, overflow: "hidden" }}>
                     <div style={{
                       width: `${pct}%`, height: "100%", borderRadius: 5,
-                      background: `linear-gradient(90deg, ${color}99, ${color})`,
+                      background: "linear-gradient(90deg, #dc2626 0%, #ea580c 33%, #d4a843 66%, #16a34a 100%)",
                       transition: "width 0.4s",
                     }} />
                   </div>
-                  <span style={{ fontSize: "0.65rem", color, fontWeight: 600, minWidth: 20, textAlign: "right", fontFamily: "var(--font-mono)" }}>
-                    {val}
-                  </span>
                 </div>
               )
             })}

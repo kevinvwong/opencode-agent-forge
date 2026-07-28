@@ -133,7 +133,6 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
             const pct = Math.round((score / 18) * 100)
             const mod = capModifier(score)
             const isHighest = k === highest
-            const color = score >= 15 ? "#16a34a" : score >= 12 ? "#d4a843" : score >= 9 ? "#ea580c" : "#dc2626"
             return (
               <div key={k} style={{ display: "flex", alignItems: "center", gap: 6 }}
                 title={`${CAPABILITY_LABELS[k]}: ${score} (${mod >= 0 ? "+" : ""}${mod})`}>
@@ -143,9 +142,9 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
                 <div style={{ flex: 1, height: 8, background: "rgba(255,255,255,0.05)", borderRadius: 4, overflow: "hidden", position: "relative" }}>
                   <div style={{
                     width: `${pct}%`, height: "100%", borderRadius: 4,
-                    background: `linear-gradient(90deg, ${color}99, ${color})`,
+                    background: "linear-gradient(90deg, #dc2626 0%, #ea580c 33%, #d4a843 66%, #16a34a 100%)",
                     transition: "width 0.3s",
-                    boxShadow: isHighest ? `0 0 6px ${color}60` : "none",
+                    boxShadow: isHighest ? "0 0 6px rgba(212,168,67,0.5)" : "none",
                   }} />
                 </div>
                 <span style={{ fontSize: "0.55rem", color: "#6a6a8e", fontFamily: "var(--font-mono)", minWidth: 22, textAlign: "right" }}>
