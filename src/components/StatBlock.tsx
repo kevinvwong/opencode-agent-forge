@@ -1,58 +1,75 @@
 import type { AgentCapabilities } from "../types/agent.ts"
-import { CAPABILITY_LABELS, CAPABILITY_FULL, CAPABILITY_COLORS, capModifier, CAPABILITY_KEYS } from "../types/agent.ts"
+import { CAPABILITY_LABELS, CAPABILITY_FULL, CAPABILITY_COLORS, capModifier, CAPABILITY_KEYS, getHighestCapability } from "../types/agent.ts"
 
 interface Props {
   capabilities: AgentCapabilities
-  editable?: boolean
-  onChange?: (caps: AgentCapabilities) => void
 }
 
-export default function StatBlock({ capabilities, editable, onChange }: Props) {
-  const handleChange = (key: keyof AgentCapabilities, value: number) => {
-    if (!onChange) return
-    const clamped = Math.max(3, Math.min(18, value))
-    onChange({ ...capabilities, [key]: clamped })
-  }
+function heatColor(score: number): string {
+  if (score >= 15) return "#16a34a"
+  if (score >= 12) return "#d4a843"
+  if (score >= 9) return "#ea580c"
+  return "#dc2626"
+}
+
+export default function StatBlock({ capabilities }: Props) {
+  const highest = getHighestCapability(capabilities)
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       {CAPABILITY_KEYS.map((key) => {
         const score = capabilities[key]
+        const pct = Math.round((score / 18) * 100)
         const mod = capModifier(score)
         const modStr = mod >= 0 ? `+${mod}` : `${mod}`
-        const color = CAPABILITY_COLORS[key]
+        const color = heatColor(score)
+        const isHighest = key === highest
 
         return (
           <div
             key={key}
-            className="stat-card"
-            style={{ borderTop: `3px solid ${color}` }}
+            style={{
+              padding: "5px 8px",
+              borderRadius: 6,
+              background: isHighest ? `${CAPABILITY_COLORS[key]}10` : "rgba(255,255,255,0.02)",
+              border: isHighest ? `1px solid ${CAPABILITY_COLORS[key]}30` : "1px solid transparent",
+            }}
+            title={`${CAPABILITY_FULL[key]}: ${score}/18`}
           >
-            <div style={{ fontSize: "0.65rem", color, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>
-              {CAPABILITY_LABELS[key]}
-            </div>
-            {editable && onChange ? (
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
-                <button
-                  onClick={() => handleChange(key, score - 1)}
-                  style={{ background: "none", border: "none", color: "#6a6a8e", cursor: "pointer", fontSize: "1rem", padding: "2px 4px" }}
-                >−</button>
-                <span style={{ fontSize: "1.5rem", fontWeight: 700, color: "#e2dcc8", fontFamily: "var(--font-serif)" }}>
-                  {score}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: "0.7rem", fontWeight: 700, color: CAPABILITY_COLORS[key], letterSpacing: 0.5, minWidth: 32 }}>
+                  {CAPABILITY_LABELS[key]}
                 </span>
-                <button
-                  onClick={() => handleChange(key, score + 1)}
-                  style={{ background: "none", border: "none", color: "#6a6a8e", cursor: "pointer", fontSize: "1rem", padding: "2px 4px" }}
-                >+</button>
+                <span style={{ fontSize: "0.6rem", color: "#6a6a8e" }}>
+                  {CAPABILITY_FULL[key]}
+                </span>
               </div>
-            ) : (
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#e2dcc8", fontFamily: "var(--font-serif)" }}>
+              <span style={{ fontSize: "0.7rem", fontWeight: 600, color: color, fontFamily: "var(--font-mono)" }}>
+                {modStr}
+              </span>
+            </div>
+            <div style={{ position: "relative", height: 10, background: "rgba(255,255,255,0.05)", borderRadius: 5, overflow: "hidden" }}>
+              <div
+                style={{
+                  width: `${pct}%`,
+                  height: "100%",
+                  borderRadius: 5,
+                  background: `linear-gradient(90deg, ${color}99, ${color})`,
+                  transition: "width 0.4s ease",
+                  boxShadow: isHighest ? `0 0 8px ${color}60` : "none",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute", right: 4, top: 0, height: "100%",
+                  display: "flex", alignItems: "center",
+                  fontSize: "0.5rem", fontWeight: 700, color: "rgba(255,255,255,0.7)",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
                 {score}
               </div>
-            )}
-            <div style={{ fontSize: "0.75rem", color: "#8a8aae" }}>{modStr}</div>
-            <div style={{ fontSize: "0.6rem", color: "#5a5a7e", marginTop: 2 }}>
-              {CAPABILITY_FULL[key]}
             </div>
           </div>
         )

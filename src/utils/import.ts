@@ -1,5 +1,5 @@
 import type { Agent } from "../types/agent.ts"
-import { generateId, generateCapabilities } from "../types/agent.ts"
+import { generateId, computeCapabilities } from "../types/agent.ts"
 
 export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent> {
   const nameFromFile = fileName?.replace(/\.md$/i, "").trim() || "imported"
@@ -22,7 +22,16 @@ export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent
     plugins: [],
     commands: {},
     tags: [],
-    capabilities: generateCapabilities(),
+    capabilities: computeCapabilities({
+      model: "anthropic/claude-sonnet-4-6",
+      mode: "subagent",
+      permissions: {},
+      steps: null,
+      temperature: null,
+      prompt: "",
+      description: "",
+      tags: [],
+    }),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     sessionCount: 0,

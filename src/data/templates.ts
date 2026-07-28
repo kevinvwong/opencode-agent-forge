@@ -1,16 +1,19 @@
 import type { Agent } from "../types/agent.ts"
-import { generateId, generateCapabilities } from "../types/agent.ts"
+import { generateId, computeCapabilities } from "../types/agent.ts"
 
 const now = new Date().toISOString()
 
-const CAPS = {
-  design:     { toolAccess: 8, responseAgility: 14, sessionResilience: 12, modelIntelligence: 16, contextAwareness: 15, collaboration: 17 },
-  psychology: { toolAccess: 8, responseAgility: 12, sessionResilience: 10, modelIntelligence: 18, contextAwareness: 16, collaboration: 14 },
-  reviewer:   { toolAccess: 16, responseAgility: 13, sessionResilience: 15, modelIntelligence: 14, contextAwareness: 12, collaboration: 8 },
-  docs:       { toolAccess: 8, responseAgility: 10, sessionResilience: 10, modelIntelligence: 15, contextAwareness: 13, collaboration: 16 },
-  debugger:   { toolAccess: 10, responseAgility: 14, sessionResilience: 13, modelIntelligence: 17, contextAwareness: 14, collaboration: 10 },
-  tester:     { toolAccess: 12, responseAgility: 16, sessionResilience: 14, modelIntelligence: 15, contextAwareness: 13, collaboration: 9 },
-  architect:  { toolAccess: 8, responseAgility: 10, sessionResilience: 12, modelIntelligence: 18, contextAwareness: 15, collaboration: 11 },
+function computeCaps(partial: Partial<Agent>): Agent["capabilities"] {
+  return computeCapabilities({
+    model: partial.model || "anthropic/claude-sonnet-4-6",
+    mode: partial.mode || "subagent",
+    permissions: partial.permissions || {},
+    steps: partial.steps ?? null,
+    temperature: partial.temperature ?? null,
+    prompt: partial.prompt || "",
+    description: partial.description || "",
+    tags: partial.tags || [],
+  })
 }
 
 function template(partial: Partial<Agent>): Agent {
@@ -32,7 +35,7 @@ function template(partial: Partial<Agent>): Agent {
     plugins: [],
     commands: {},
     tags: [],
-    capabilities: generateCapabilities(),
+    capabilities: computeCaps(partial),
     createdAt: now,
     updatedAt: now,
     sessionCount: 0,
@@ -50,7 +53,6 @@ export const TEMPLATES: Agent[] = [
     model: "anthropic/claude-sonnet-4-6",
     temperature: 0.3,
     mode: "subagent",
-    capabilities: CAPS.design,
     permissions: { read: "allow", edit: "deny", bash: { "*": "ask", "git diff*": "allow", "git log*": "allow", "grep *": "allow" } },
     tags: ["design", "ux", "ui", "heuristics", "accessibility", "feedback"],
     prompt: `You are a design & UX specialist. Evaluate interfaces, components, and design systems.
@@ -88,7 +90,6 @@ Output format:
     model: "anthropic/claude-sonnet-4-6",
     temperature: 0.4,
     mode: "subagent",
-    capabilities: CAPS.psychology,
     permissions: { read: "allow", edit: "deny", bash: { "*": "ask", "git diff*": "allow", "git log*": "allow", "grep *": "allow" } },
     tags: ["psychology", "cognition", "motivation", "biases", "ethics", "gamification"],
     prompt: `You are a behavioural psychologist specialising in HCI and product design. Analyse interfaces and flows through the lens of cognitive science.
@@ -122,7 +123,6 @@ Output: cite the specific mechanism, describe the likely user impact, rate ethic
     model: "anthropic/claude-sonnet-4-6",
     temperature: 0.1,
     mode: "subagent",
-    capabilities: CAPS.reviewer,
     permissions: { read: "allow", edit: "deny", bash: { "*": "ask", "git diff*": "allow", "git log*": "allow", "grep *": "allow" } },
     tags: ["review", "security", "quality", "audit", "vulnerability"],
     prompt: `You are a code reviewer. Examine diffs and codebases for issues.
@@ -166,7 +166,6 @@ Start with highest severity. If no issues found, explicitly state "No issues fou
     model: "anthropic/claude-haiku-4-20250514",
     temperature: 0.5,
     mode: "subagent",
-    capabilities: CAPS.docs,
     permissions: { read: "allow", edit: "allow", bash: "deny" },
     tags: ["docs", "writing", "api", "readme", "technical-writing"],
     prompt: `You are a technical writer. Create and maintain project documentation.
@@ -208,7 +207,6 @@ When updating existing docs, preserve the existing tone and structure unless exp
     model: "anthropic/claude-sonnet-4-6",
     temperature: 0.1,
     mode: "subagent",
-    capabilities: CAPS.debugger,
     permissions: { read: "allow", edit: "ask", bash: { "*": "allow", "rm *": "deny" } },
     tags: ["debug", "diagnostic", "triage", "root-cause", "bug-hunting"],
     prompt: `You are a debug specialist. Investigate issues methodically.
@@ -247,7 +245,6 @@ When updating existing docs, preserve the existing tone and structure unless exp
     model: "anthropic/claude-sonnet-4-6",
     temperature: 0.2,
     mode: "subagent",
-    capabilities: CAPS.tester,
     permissions: { read: "allow", edit: "allow", bash: { "*": "ask", "npm test*": "allow", "npx vitest*": "allow", "pytest*": "allow" } },
     tags: ["test", "qa", "vitest", "playwright", "coverage", "unit-test"],
     prompt: `You are a testing specialist. Write and maintain tests across the testing pyramid.
@@ -290,7 +287,6 @@ When updating existing docs, preserve the existing tone and structure unless exp
     model: "anthropic/claude-sonnet-4-6",
     temperature: 0.2,
     mode: "subagent",
-    capabilities: CAPS.architect,
     permissions: { read: "allow", edit: "deny", bash: { "*": "ask", "git diff*": "allow", "git log*": "allow", "grep *": "allow" } },
     tags: ["architecture", "design", "planning", "data-model", "adr", "trade-off"],
     prompt: `You are a system architect. Design and evaluate software architecture.

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import type { Agent, AgentPermissions } from "../types/agent.ts"
-import { generateId, generateCapabilities, MODE_LABELS } from "../types/agent.ts"
+import { generateId, computeCapabilities, MODE_LABELS } from "../types/agent.ts"
 import { useAgent, saveAgent } from "../db/hooks.ts"
 import { downloadAgentFile } from "../utils/export.ts"
 import StatBlock from "../components/StatBlock.tsx"
@@ -18,14 +18,11 @@ export default function Editor() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [activeTab, setActiveTab] = useState<string>("character")
-  const [showRoll, setShowRoll] = useState(false)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const rollTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
-      if (rollTimerRef.current) clearTimeout(rollTimerRef.current)
     }
   }, [])
 
@@ -49,7 +46,16 @@ export default function Editor() {
         plugins: [],
         commands: {},
         tags: [],
-        capabilities: generateCapabilities(),
+        capabilities: computeCapabilities({
+          model: "anthropic/claude-sonnet-4-6",
+          mode: "subagent",
+          permissions: {},
+          steps: null,
+          temperature: null,
+          prompt: "",
+          description: "",
+          tags: [],
+        }),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         sessionCount: 0,
@@ -80,15 +86,6 @@ export default function Editor() {
       console.error("Failed to save agent:", err)
     }
     setSaving(false)
-  }
-
-  const handleRollCapabilities = () => {
-    setShowRoll(true)
-    const freshCaps = generateCapabilities()
-    rollTimerRef.current = setTimeout(() => {
-      setAgent((prev) => prev ? { ...prev, capabilities: freshCaps } : prev)
-      setShowRoll(false)
-    }, 600)
   }
 
   if (loading || !agent) {
@@ -143,24 +140,13 @@ export default function Editor() {
         <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "1rem" }}>
           <div>
             <div className="sheet-panel" style={{ marginBottom: "1rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "0.9rem", color: "#d4a843", margin: 0 }}>
-                  Capability Scores
-                </h3>
-                <button
-                  onClick={handleRollCapabilities}
-                  className="btn-ghost"
-                  style={{ fontSize: "0.7rem", padding: "2px 8px" }}
-                  title="Randomize scores (3-18)"
-                >
-                  {showRoll ? <span className="dice-icon">🎲</span> : "Roll"}
-                </button>
-              </div>
-              <StatBlock
-                capabilities={agent.capabilities}
-                editable
-                onChange={(caps) => update("capabilities", caps)}
-              />
+              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "0.9rem", color: "#d4a843", margin: "0 0 8px" }}>
+                Capability Scores
+              </h3>
+              <p style={{ fontSize: "0.7rem", color: "#6a6a8e", marginBottom: 8 }}>
+                Auto-derived from agent configuration
+              </p>
+              <StatBlock capabilities={computeCapabilities(agent)} />
             </div>
 
             <div className="sheet-panel">

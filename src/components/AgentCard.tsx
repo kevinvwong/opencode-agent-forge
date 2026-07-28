@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import type { Agent } from "../types/agent.ts"
-import { CAPABILITY_COLORS, capModifier, CAPABILITY_LABELS, MODE_COLORS, MODE_LABELS, CAPABILITY_KEYS, computeMetrics, getHighestCapability } from "../types/agent.ts"
+import { CAPABILITY_COLORS, capModifier, CAPABILITY_LABELS, MODE_COLORS, MODE_LABELS, CAPABILITY_KEYS, computeMetrics, getHighestCapability, computeCapabilities } from "../types/agent.ts"
 import { countPermissions } from "../utils/permissions.ts"
 import { downloadAgentFile } from "../utils/export.ts"
 
@@ -14,7 +14,7 @@ interface Props {
 
 export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" }: Props) {
   const navigate = useNavigate()
-  const caps = agent.capabilities
+  const caps = computeCapabilities(agent)
   const highest = getHighestCapability(caps)
   const perms = countPermissions(agent.permissions)
   const metrics = computeMetrics(caps)
@@ -127,27 +127,30 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
           {agent.description}
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 3 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {CAPABILITY_KEYS.map((k) => {
             const score = caps[k]
+            const pct = Math.round((score / 18) * 100)
             const mod = capModifier(score)
             const isHighest = k === highest
-            const barPct = Math.round((score / 18) * 100)
+            const color = score >= 15 ? "#16a34a" : score >= 12 ? "#d4a843" : score >= 9 ? "#ea580c" : "#dc2626"
             return (
-              <div key={k} style={{ padding: "3px 4px", borderRadius: 4, background: isHighest ? `${CAPABILITY_COLORS[k]}15` : "rgba(255,255,255,0.03)" }}
+              <div key={k} style={{ display: "flex", alignItems: "center", gap: 6 }}
                 title={`${CAPABILITY_LABELS[k]}: ${score} (${mod >= 0 ? "+" : ""}${mod})`}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-                  <span style={{ fontSize: "0.55rem", color: CAPABILITY_COLORS[k], fontWeight: 700, letterSpacing: 0.5 }}>{CAPABILITY_LABELS[k]}</span>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#e2dcc8", fontFamily: "var(--font-serif)" }}>
-                    {score}
-                    <span style={{ fontSize: "0.55rem", color: "#8a8aae", fontWeight: 400, marginLeft: 2 }}>
-                      ({mod >= 0 ? "+" : ""}{mod})
-                    </span>
-                  </span>
+                <span style={{ fontSize: "0.55rem", fontWeight: 700, color: CAPABILITY_COLORS[k], minWidth: 28, letterSpacing: 0.5 }}>
+                  {CAPABILITY_LABELS[k]}
+                </span>
+                <div style={{ flex: 1, height: 8, background: "rgba(255,255,255,0.05)", borderRadius: 4, overflow: "hidden", position: "relative" }}>
+                  <div style={{
+                    width: `${pct}%`, height: "100%", borderRadius: 4,
+                    background: `linear-gradient(90deg, ${color}99, ${color})`,
+                    transition: "width 0.3s",
+                    boxShadow: isHighest ? `0 0 6px ${color}60` : "none",
+                  }} />
                 </div>
-                <div style={{ width: "100%", height: 3, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden" }}>
-                  <div style={{ width: `${barPct}%`, height: "100%", background: CAPABILITY_COLORS[k], borderRadius: 2, transition: "width 0.3s" }} />
-                </div>
+                <span style={{ fontSize: "0.55rem", color: "#6a6a8e", fontFamily: "var(--font-mono)", minWidth: 22, textAlign: "right" }}>
+                  {mod >= 0 ? "+" : ""}{mod}
+                </span>
               </div>
             )
           })}

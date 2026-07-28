@@ -169,30 +169,74 @@ export function capModifier(score: number): number {
   return Math.floor((score - 10) / 2)
 }
 
-export function generateCapabilities(): AgentCapabilities {
-  function roll4d6DropLowest(): number {
-    const rolls = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6) + 1)
-    rolls.sort((a, b) => a - b)
-    return rolls.slice(1).reduce((a, b) => a + b, 0)
+type AgentLike = {
+  model: string; mode: AgentMode; permissions: AgentPermissions
+  steps: number | null; temperature: number | null
+  prompt: string; description: string; tags: string[]
+}
+
+function modelSpeedRank(m: string): number {
+  const s = m.toLowerCase()
+  if (s.includes("haiku")) return 5
+  if (s.includes("sonnet")) return 3
+  return 1
+}
+
+function modelTier(m: string): number {
+  const s = m.toLowerCase()
+  if (s.includes("gpt-5")) return 5
+  if (s.includes("sonnet-4")) return 4
+  if (s.includes("codex")) return 3
+  if (s.includes("haiku-4")) return 2
+  return 3
+}
+
+function modelContextWindow(m: string): number {
+  const s = m.toLowerCase()
+  if (s.includes("haiku") || s.includes("sonnet") || s.includes("gpt")) return 200_000
+  return 128_000
+}
+
+function countLevel(perms: AgentPermissions, lvl: string): number {
+  let n = 0
+  for (const k of Object.keys(TOOL_LABELS)) {
+    const v = perms[k]
+    if (typeof v === "string" && v === lvl) n++
   }
-  return {
-    toolAccess: roll4d6DropLowest(),
-    responseAgility: roll4d6DropLowest(),
-    sessionResilience: roll4d6DropLowest(),
-    modelIntelligence: roll4d6DropLowest(),
-    contextAwareness: roll4d6DropLowest(),
-    collaboration: roll4d6DropLowest(),
-  }
+  return n
+}
+
+function clampToStat(v: number): number {
+  return Math.max(3, Math.min(18, Math.round(v)))
+}
+
+export function computeCapabilities(a: AgentLike): AgentCapabilities {
+  const toolAccess = clampToStat(6 + countLevel(a.permissions, "allow") * 2 + countLevel(a.permissions, "ask"))
+
+  const responseAgility = clampToStat(6 + modelSpeedRank(a.model) * 2 + (a.temperature ?? 0.5) * 2)
+
+  const sessionResilience = a.steps === null ? 18
+    : a.steps >= 20 ? 18 : a.steps >= 10 ? 16 : a.steps >= 5 ? 14 : a.steps >= 3 ? 12 : 10
+
+  const modelIntelligence = clampToStat(6 + modelTier(a.model) * 2.5)
+
+  const windowK = modelContextWindow(a.model) / 1000
+  const usedRatio = Math.min(a.prompt.length / modelContextWindow(a.model), 1)
+  const contextAwareness = clampToStat(6 + usedRatio * 6 + (windowK >= 200 ? 4 : 2))
+
+  const collabMode = a.mode === "all" ? 5 : a.mode === "primary" ? 3 : 2
+  const collabTask = a.permissions.task === "allow" ? 3 : a.permissions.task === "ask" ? 1 : 0
+  const collaboration = clampToStat(6 + collabMode * 1.5 + collabTask)
+
+  return { toolAccess, responseAgility, sessionResilience, modelIntelligence, contextAwareness, collaboration }
 }
 
 export function computeMetrics(caps: AgentCapabilities): AgentMetrics {
-  const conMod = capModifier(caps.sessionResilience)
-  const dexMod = capModifier(caps.responseAgility)
   return {
-    sessionCapacity: Math.max(1, 10 + conMod * 3),
-    securityRating: Math.max(10, 10 + dexMod),
-    responsiveness: dexMod,
-    proficiency: Math.ceil(1 + 3 / 4),
+    sessionCapacity: 10 + Math.floor((caps.sessionResilience - 10) / 2) * 3,
+    securityRating: 10 + Math.max(0, Math.floor((caps.toolAccess - 10) / 2)),
+    responsiveness: Math.floor((caps.responseAgility - 10) / 2),
+    proficiency: 1 + Math.floor((caps.modelIntelligence - 8) / 3),
   }
 }
 

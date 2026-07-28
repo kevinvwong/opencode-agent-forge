@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useAgents, deleteAgent, duplicateAgent } from "../db/hooks.ts"
 import { useToast } from "../components/Toast.tsx"
 import AgentCard from "../components/AgentCard.tsx"
-import { MODE_COLORS, computeMetrics, CAPABILITY_KEYS } from "../types/agent.ts"
+import { MODE_COLORS, computeMetrics, CAPABILITY_KEYS, CAPABILITY_LABELS, CAPABILITY_COLORS, computeCapabilities } from "../types/agent.ts"
 
 export default function Dashboard() {
   const { agents, loading, refresh } = useAgents()
@@ -11,7 +11,7 @@ export default function Dashboard() {
 
   const templates = agents.filter((a) => a.isTemplate)
   const custom = agents.filter((a) => !a.isTemplate)
-  const allCaps = agents.map((a) => a.capabilities)
+  const allCaps = agents.map((a) => computeCapabilities(a))
 
   const avgCaps = allCaps.length > 0 ? {
     toolAccess: Math.round(allCaps.reduce((s, a) => s + a.toolAccess, 0) / allCaps.length),
@@ -23,7 +23,7 @@ export default function Dashboard() {
   } : null
 
   const totalSessions = agents.reduce((s, a) => s + a.sessionCount, 0)
-  const totalCapacity = agents.reduce((s, a) => s + computeMetrics(a.capabilities).sessionCapacity, 0)
+  const totalCapacity = agents.reduce((s, a) => s + computeMetrics(computeCapabilities(a)).sessionCapacity, 0)
 
   const handleDelete = async (id: string) => {
     try {
@@ -110,26 +110,28 @@ export default function Dashboard() {
       {hasData && avgCaps && (
         <div className="sheet-panel" style={{ marginBottom: "1.5rem" }}>
           <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "0.85rem", color: "#8a8aae", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: 1 }}>
-            Average Capabilities
+            Roster Average Capabilities
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
             {CAPABILITY_KEYS.map((key) => {
               const val = avgCaps[key]
-              const colors: Record<string, string> = {
-                toolAccess: "#dc2626", responseAgility: "#ea580c", sessionResilience: "#16a34a",
-                modelIntelligence: "#2563eb", contextAwareness: "#7c3aed", collaboration: "#db2777",
-              }
-              const labels: Record<string, string> = {
-                toolAccess: "TAC", responseAgility: "RAG", sessionResilience: "SRS",
-                modelIntelligence: "MIT", contextAwareness: "CAW", collaboration: "COL",
-              }
+              const pct = Math.round((val / 18) * 100)
+              const color = val >= 15 ? "#16a34a" : val >= 12 ? "#d4a843" : val >= 9 ? "#ea580c" : "#dc2626"
               return (
-                <div key={key} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "0.6rem", color: colors[key] ?? "#888", fontWeight: 600 }}>{labels[key] ?? key}</div>
-                  <div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#e2dcc8", fontFamily: "var(--font-serif)" }}>{val}</div>
-                  <div style={{ width: "100%", height: 3, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden" }}>
-                    <div style={{ width: `${(val / 18) * 100}%`, height: "100%", background: colors[key] ?? "#888", borderRadius: 2 }} />
+                <div key={key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: "0.6rem", fontWeight: 700, color: CAPABILITY_COLORS[key], minWidth: 30, letterSpacing: 0.5 }}>
+                    {CAPABILITY_LABELS[key]}
+                  </span>
+                  <div style={{ flex: 1, height: 10, background: "rgba(255,255,255,0.04)", borderRadius: 5, overflow: "hidden" }}>
+                    <div style={{
+                      width: `${pct}%`, height: "100%", borderRadius: 5,
+                      background: `linear-gradient(90deg, ${color}99, ${color})`,
+                      transition: "width 0.4s",
+                    }} />
                   </div>
+                  <span style={{ fontSize: "0.65rem", color, fontWeight: 600, minWidth: 20, textAlign: "right", fontFamily: "var(--font-mono)" }}>
+                    {val}
+                  </span>
                 </div>
               )
             })}
