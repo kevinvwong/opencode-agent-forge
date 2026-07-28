@@ -9,6 +9,17 @@ import { computeCapabilities, CAPABILITY_KEYS, CAPABILITY_COLORS } from "../type
 type Phase = "input" | "planning" | "dispatched"
 type Tab = "orchestrate" | "audit"
 
+const STATUS_COLOR = (s: string) => s === "pass" ? "var(--color-success)" : s === "warn" ? "var(--color-warning)" : "var(--color-danger)"
+const STATUS_ICON = (s: string) => s === "pass" ? "✓" : s === "warn" ? "!" : "✕"
+
+const QUALITY_ITEMS = [
+  { key: "task", label: "Task is fully addressed" },
+  { key: "complete", label: "Output is complete and not truncated" },
+  { key: "accurate", label: "Technical accuracy is verified" },
+  { key: "examples", label: "Examples are correct and tested" },
+  { key: "style", label: "Follows project conventions and style" },
+]
+
 export default function GodAgent() {
   const { agents, refresh } = useAgents()
   const navigate = useNavigate()
@@ -67,18 +78,9 @@ export default function GodAgent() {
     })
   }
 
-  const qualityItems = [
-    { key: "task", label: "Task is fully addressed" },
-    { key: "complete", label: "Output is complete and not truncated" },
-    { key: "accurate", label: "Technical accuracy is verified" },
-    { key: "examples", label: "Examples are correct and tested" },
-    { key: "style", label: "Follows project conventions and style" },
-  ]
+  const allPassed = QUALITY_ITEMS.every((q) => qualityCheck[q.key])
 
-  const allPassed = qualityItems.every((q) => qualityCheck[q.key])
 
-  const statusColor = (s: string) => s === "pass" ? "var(--color-success)" : s === "warn" ? "var(--color-warning)" : "var(--color-danger)"
-  const statusIcon = (s: string) => s === "pass" ? "✓" : s === "warn" ? "!" : "✕"
 
   return (
     <div style={{ maxWidth: 720, margin: "0 auto" }}>
@@ -205,7 +207,7 @@ export default function GodAgent() {
             <div className="card" style={{ padding: "0.75rem" }}>
               <div style={{ fontSize: "0.7rem", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "0.5rem" }}>Output Quality Checklist</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: "0.75rem" }}>
-                {qualityItems.map((q) => (
+                {QUALITY_ITEMS.map((q) => (
                   <label key={q.key} style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer", padding: "0.2rem 0", fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>
                     <input type="checkbox" checked={qualityCheck[q.key] ?? false}
                       onChange={(e) => setQualityCheck((p) => ({ ...p, [q.key]: e.target.checked }))}
@@ -277,8 +279,8 @@ export default function GodAgent() {
                       <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                         {review.checks.map((c, i) => (
                           <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 6, fontSize: "0.7rem" }}>
-                            <span style={{ color: statusColor(c.status), fontWeight: 700, flexShrink: 0, fontFamily: "var(--font-mono)", fontSize: "0.6rem" }}>
-                              {statusIcon(c.status)}
+                            <span style={{ color: STATUS_COLOR(c.status), fontWeight: 700, flexShrink: 0, fontFamily: "var(--font-mono)", fontSize: "0.6rem" }}>
+                              {STATUS_ICON(c.status)}
                             </span>
                             <div style={{ flex: 1 }}>
                               <span style={{ color: "var(--color-text-secondary)" }}>{c.label}</span>
