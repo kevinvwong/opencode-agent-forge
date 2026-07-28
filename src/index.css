@@ -92,14 +92,19 @@ body {
 
 .btn-ghost {
   background: transparent;
-  color: var(--color-text-secondary);
-  border: none;
-  padding: 0.4rem 0.625rem;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
 }
 .btn-ghost:hover:not(:disabled) {
-  color: var(--color-text);
-  background: var(--color-bg-hover);
-  border-radius: 6px;
+  background: var(--color-accent-dim);
 }
 
 /* ---- Form fields ---- */
@@ -270,6 +275,19 @@ select.field {
 ::-webkit-scrollbar-track { background: var(--color-bg-deep); }
 ::-webkit-scrollbar-thumb { background: var(--color-border-light); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-border-accent); }
+
+/* ---- Legacy aliases (used by existing components) ---- */
+.sheet-panel { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1rem; }
+.btn-gold { background: var(--color-accent); color: #0b0b14; font-weight: 600; padding: 0.5rem 1.25rem; border-radius: 6px; border: none; cursor: pointer; transition: all 0.15s; }
+.btn-gold:hover { background: var(--color-accent-hover); box-shadow: 0 0 16px rgba(245, 158, 11, 0.3); }
+.btn-gold:disabled { opacity: 0.45; cursor: not-allowed; }
+.input-field { background: var(--color-bg-deep); border: 1px solid var(--color-border); color: var(--color-text); padding: 0.5rem 0.75rem; border-radius: 6px; width: 100%; outline: none; transition: border-color 0.15s; }
+.input-field:focus { border-color: var(--color-accent); }
+.textarea-field { background: var(--color-bg-deep); border: 1px solid var(--color-border); color: var(--color-text); padding: 0.5rem 0.75rem; border-radius: 6px; width: 100%; resize: vertical; outline: none; transition: border-color 0.15s; font-family: var(--font-mono); font-size: 0.875rem; }
+.textarea-field:focus { border-color: var(--color-accent); }
+select.input-field { cursor: pointer; }
+.stat-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 0.75rem; text-align: center; transition: all 0.15s; }
+.stat-card:hover { border-color: var(--color-accent); }
 
 /* ---- Animations ---- */
 @keyframes slideIn {
