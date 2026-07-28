@@ -54,7 +54,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         ))}
 
         <div style={{ marginTop: "auto", padding: "1rem", fontSize: "0.7rem", color: "#4a4a6e", textAlign: "center" }}>
-          opencode Agent Manager v1
+          opencode Agent Forge
         </div>
       </nav>
 

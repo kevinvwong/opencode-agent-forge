@@ -1,5 +1,6 @@
-import type { AgentPermissions, PermissionLevel } from "../types/agent.ts"
+import type { AgentPermissions } from "../types/agent.ts"
 import { TOOL_LABELS } from "../types/agent.ts"
+import { getPermissionLevel } from "../utils/permissions.ts"
 
 interface Props {
   permissions: AgentPermissions
@@ -10,24 +11,18 @@ export default function SkillProficiencies({ permissions, size = "md" }: Props) 
   const dotSize = size === "sm" ? 10 : 14
   const fontS = size === "sm" ? "0.6rem" : "0.75rem"
 
-  const getLevel = (tool: string): PermissionLevel => {
-    const v = permissions[tool]
-    if (v === "allow" || v === "ask" || v === "deny") return v
-    return "deny"
-  }
-
-  const dots = (level: PermissionLevel): number => {
+  const dots = (level: string): number => {
     switch (level) {
       case "allow": return 3
       case "ask": return 2
-      case "deny": return 1
+      default: return 1
     }
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
       {Object.entries(TOOL_LABELS).map(([key, label]) => {
-        const level = getLevel(key)
+        const level = getPermissionLevel(permissions, key)
         const count = dots(level)
 
         return (

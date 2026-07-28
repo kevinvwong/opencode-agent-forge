@@ -1,5 +1,6 @@
-import type { AgentPermissions, PermissionLevel } from "../types/agent.ts"
-import { TOOL_LABELS, TOOL_DESCRIPTIONS } from "../types/agent.ts"
+import type { AgentPermissions } from "../types/agent.ts"
+import { TOOL_LABELS, TOOL_DESCRIPTIONS, type PermissionLevel } from "../types/agent.ts"
+import { getPermissionLevel } from "../utils/permissions.ts"
 
 interface Props {
   permissions: AgentPermissions
@@ -17,17 +18,10 @@ function nextLevel(current: PermissionLevel | undefined): PermissionLevel {
 }
 
 export default function PermissionsPanel({ permissions, onChange, readonly }: Props) {
-  const getLevel = (tool: string): PermissionLevel => {
-    const v = permissions[tool]
-    if (v === "allow") return "allow"
-    if (v === "ask") return "ask"
-    if (v === "deny") return "deny"
-    return "deny"
-  }
 
   const cyclePermission = (tool: string) => {
     if (!onChange || readonly) return
-    const current = getLevel(tool)
+    const current = getPermissionLevel(permissions, tool)
     const next = nextLevel(current)
     const updated = { ...permissions, [tool]: next }
     onChange(updated)
@@ -52,7 +46,7 @@ export default function PermissionsPanel({ permissions, onChange, readonly }: Pr
   return (
     <div>
       {ALL_TOOLS.map((tool) => {
-        const level = getLevel(tool)
+        const level = getPermissionLevel(permissions, tool)
         const color = levelColor(level)
 
         return (

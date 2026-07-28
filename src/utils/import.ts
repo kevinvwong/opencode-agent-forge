@@ -1,5 +1,5 @@
 import type { Agent } from "../types/agent.ts"
-import { generateId, rollStats } from "../types/agent.ts"
+import { generateId, generateCapabilities } from "../types/agent.ts"
 
 export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent> {
   const nameFromFile = fileName?.replace(/\.md$/i, "").trim() || "imported"
@@ -22,12 +22,7 @@ export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent
     plugins: [],
     commands: {},
     tags: [],
-    dndStats: rollStats(),
-    dndClass: "Wizard",
-    dndLevel: 1,
-    dndRace: "Human",
-    dndAlignment: "Neutral Good",
-    dndBackground: "Sage",
+    capabilities: generateCapabilities(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     sessionCount: 0,

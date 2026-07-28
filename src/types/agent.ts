@@ -36,13 +36,20 @@ export interface MCPConfig {
   headers?: Record<string, string>
 }
 
-export interface DnDStats {
-  strength: number
-  dexterity: number
-  constitution: number
-  intelligence: number
-  wisdom: number
-  charisma: number
+export interface AgentCapabilities {
+  toolAccess: number
+  responseAgility: number
+  sessionResilience: number
+  modelIntelligence: number
+  contextAwareness: number
+  collaboration: number
+}
+
+export interface AgentMetrics {
+  sessionCapacity: number
+  securityRating: number
+  responsiveness: number
+  proficiency: number
 }
 
 export interface Agent {
@@ -63,14 +70,7 @@ export interface Agent {
   plugins: string[]
   commands: Record<string, string>
   tags: string[]
-
-  dndStats: DnDStats
-  dndClass: string
-  dndLevel: number
-  dndRace: string
-  dndAlignment: string
-  dndBackground: string
-
+  capabilities: AgentCapabilities
   createdAt: string
   updatedAt: string
   sessionCount: number
@@ -79,37 +79,43 @@ export interface Agent {
   isTemplate: boolean
 }
 
-export const STAT_LABELS: Record<keyof DnDStats, string> = {
-  strength: "STR",
-  dexterity: "DEX",
-  constitution: "CON",
-  intelligence: "INT",
-  wisdom: "WIS",
-  charisma: "CHA",
+export const CAPABILITY_LABELS: Record<keyof AgentCapabilities, string> = {
+  toolAccess: "TAC",
+  responseAgility: "RAG",
+  sessionResilience: "SRS",
+  modelIntelligence: "MIT",
+  contextAwareness: "CAW",
+  collaboration: "COL",
 }
 
-export const STAT_FULL: Record<keyof DnDStats, string> = {
-  strength: "Strength",
-  dexterity: "Dexterity",
-  constitution: "Constitution",
-  intelligence: "Intelligence",
-  wisdom: "Wisdom",
-  charisma: "Charisma",
+export const CAPABILITY_FULL: Record<keyof AgentCapabilities, string> = {
+  toolAccess: "Tool Access",
+  responseAgility: "Response Agility",
+  sessionResilience: "Session Resilience",
+  modelIntelligence: "Model Intelligence",
+  contextAwareness: "Context Awareness",
+  collaboration: "Collaboration",
 }
 
-export const STAT_COLORS: Record<keyof DnDStats, string> = {
-  strength: "#dc2626",
-  dexterity: "#ea580c",
-  constitution: "#16a34a",
-  intelligence: "#2563eb",
-  wisdom: "#7c3aed",
-  charisma: "#db2777",
+export const CAPABILITY_COLORS: Record<keyof AgentCapabilities, string> = {
+  toolAccess: "#dc2626",
+  responseAgility: "#ea580c",
+  sessionResilience: "#16a34a",
+  modelIntelligence: "#2563eb",
+  contextAwareness: "#7c3aed",
+  collaboration: "#db2777",
 }
 
-export const MODE_CLASS_MAP: Record<AgentMode, string> = {
-  primary: "Fighter",
-  subagent: "Wizard",
-  all: "Bard",
+export const MODE_LABELS: Record<AgentMode, string> = {
+  primary: "Primary",
+  subagent: "Subagent",
+  all: "All",
+}
+
+export const MODE_COLORS: Record<AgentMode, string> = {
+  primary: "#dc2626",
+  subagent: "#7c3aed",
+  all: "#d4a843",
 }
 
 export const TOOL_LABELS: Record<string, string> = {
@@ -150,24 +156,48 @@ export const TOOL_DESCRIPTIONS: Record<string, string> = {
   question: "Ask user questions",
 }
 
-export function statModifier(score: number): number {
+export const CAPABILITY_KEYS: (keyof AgentCapabilities)[] = [
+  "toolAccess",
+  "responseAgility",
+  "sessionResilience",
+  "modelIntelligence",
+  "contextAwareness",
+  "collaboration",
+]
+
+export function capModifier(score: number): number {
   return Math.floor((score - 10) / 2)
 }
 
-export function rollStats(): DnDStats {
+export function generateCapabilities(): AgentCapabilities {
   function roll4d6DropLowest(): number {
     const rolls = Array.from({ length: 4 }, () => Math.floor(Math.random() * 6) + 1)
     rolls.sort((a, b) => a - b)
     return rolls.slice(1).reduce((a, b) => a + b, 0)
   }
   return {
-    strength: roll4d6DropLowest(),
-    dexterity: roll4d6DropLowest(),
-    constitution: roll4d6DropLowest(),
-    intelligence: roll4d6DropLowest(),
-    wisdom: roll4d6DropLowest(),
-    charisma: roll4d6DropLowest(),
+    toolAccess: roll4d6DropLowest(),
+    responseAgility: roll4d6DropLowest(),
+    sessionResilience: roll4d6DropLowest(),
+    modelIntelligence: roll4d6DropLowest(),
+    contextAwareness: roll4d6DropLowest(),
+    collaboration: roll4d6DropLowest(),
   }
+}
+
+export function computeMetrics(caps: AgentCapabilities): AgentMetrics {
+  const conMod = capModifier(caps.sessionResilience)
+  const dexMod = capModifier(caps.responseAgility)
+  return {
+    sessionCapacity: Math.max(1, 10 + conMod * 3),
+    securityRating: Math.max(10, 10 + dexMod),
+    responsiveness: dexMod,
+    proficiency: Math.ceil(1 + 3 / 4),
+  }
+}
+
+export function getHighestCapability(caps: AgentCapabilities): keyof AgentCapabilities {
+  return CAPABILITY_KEYS.reduce((a, b) => caps[a] >= caps[b] ? a : b)
 }
 
 export function generateId(): string {
