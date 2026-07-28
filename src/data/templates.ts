@@ -41,15 +41,16 @@ function template(partial: Partial<Agent>): Agent {
 export const TEMPLATES: Agent[] = [
   template({
     name: "design",
-    description: "Covers UX/UI design, design systems, and conducts user/expert reviews",
+    description: "UX/UI specialist — audits interfaces, design systems, and conducts heuristic evaluations with severity-rated findings",
     model: "anthropic/claude-sonnet-4-6",
     dndClass: "Bard",
     dndRace: "Elf",
     dndAlignment: "Chaotic Good",
     dndBackground: "Entertainer",
+    dndLevel: 3,
     dndStats: { strength: 8, dexterity: 14, constitution: 12, intelligence: 16, wisdom: 15, charisma: 17 },
     permissions: { edit: "deny", bash: { "*": "ask", "git diff*": "allow", "git log*": "allow", "grep *": "allow" } },
-    tags: ["design", "ux", "ui", "review"],
+    tags: ["design", "ux", "ui", "heuristics", "accessibility"],
     prompt: `You are a design & UX specialist. Cover these areas:
 
 **UX / UI Design:**
@@ -71,15 +72,16 @@ Output: structured findings with severity ratings, rationale, and concrete fix s
   }),
   template({
     name: "psychologist",
-    description: "Applies behavioural psychology, cognitive science, and motivation design",
+    description: "Behavioural psychologist — applies cognitive science, motivation theory, and ethical nudge design to product decisions",
     model: "anthropic/claude-sonnet-4-6",
     dndClass: "Wizard",
     dndRace: "Gnome",
     dndAlignment: "Lawful Neutral",
     dndBackground: "Sage",
+    dndLevel: 3,
     dndStats: { strength: 8, dexterity: 12, constitution: 10, intelligence: 18, wisdom: 16, charisma: 14 },
     permissions: { edit: "deny", bash: { "*": "ask", "git diff*": "allow", "git log*": "allow", "grep *": "allow" } },
-    tags: ["psychology", "behavior", "cognition", "ux"],
+    tags: ["psychology", "cognition", "motivation", "biases", "ethics"],
     prompt: `You are a behavioural psychologist specialising in human-computer interaction and product design. Cover these areas:
 
 **Cognitive Biases & Heuristics:**
@@ -100,15 +102,16 @@ Output: explain the psychological principle at play, describe the likely user im
   }),
   template({
     name: "code-reviewer",
-    description: "Reviews code for security, performance, and maintainability issues",
+    description: "Security-focused code reviewer — detects vulnerabilities, anti-patterns, and correctness issues with severity-ranked findings",
     model: "anthropic/claude-sonnet-4-6",
     dndClass: "Fighter",
     dndRace: "Dwarf",
     dndAlignment: "Lawful Good",
     dndBackground: "Soldier",
+    dndLevel: 4,
     dndStats: { strength: 16, dexterity: 13, constitution: 15, intelligence: 14, wisdom: 12, charisma: 8 },
     permissions: { edit: "deny", bash: { "*": "ask", "git diff*": "allow", "git log*": "allow", "grep *": "allow" } },
-    tags: ["review", "security", "quality"],
+    tags: ["review", "security", "quality", "audit"],
     prompt: `You are a code reviewer. Focus on identifying potential issues in code changes.
 
 Look for:
@@ -122,15 +125,16 @@ Output: findings with severity ratings, code references, and concrete fix sugges
   }),
   template({
     name: "docs-writer",
-    description: "Writes and maintains clear project documentation",
+    description: "Technical writer — produces clear, well-structured documentation with working examples and consistent terminology",
     model: "anthropic/claude-haiku-4-20250514",
     dndClass: "Bard",
     dndRace: "Human",
     dndAlignment: "Neutral Good",
     dndBackground: "Scribe",
+    dndLevel: 2,
     dndStats: { strength: 8, dexterity: 10, constitution: 10, intelligence: 15, wisdom: 13, charisma: 16 },
     permissions: { bash: "deny" },
-    tags: ["docs", "writing"],
+    tags: ["docs", "writing", "api", "readme"],
     prompt: `You are a technical writer. Create clear, comprehensive documentation.
 
 Focus on:
@@ -142,15 +146,16 @@ Focus on:
   }),
   template({
     name: "debugger",
-    description: "Investigates and fixes bugs with deep diagnostic analysis",
+    description: "Diagnostic investigator — traces execution paths, isolates root causes, and produces minimal reproductions",
     model: "anthropic/claude-sonnet-4-6",
     dndClass: "Wizard",
     dndRace: "Tiefling",
     dndAlignment: "Chaotic Neutral",
     dndBackground: "Hermit",
+    dndLevel: 4,
     dndStats: { strength: 10, dexterity: 14, constitution: 13, intelligence: 17, wisdom: 14, charisma: 10 },
     permissions: { edit: "ask", bash: { "*": "allow", "rm *": "deny" } },
-    tags: ["debug", "bug", "diagnostic"],
+    tags: ["debug", "diagnostic", "triage", "root-cause"],
     prompt: `You are a debug specialist. Investigate issues systematically.
 
 Process:
@@ -163,15 +168,16 @@ Focus on: stack traces, logs, state inspection, test cases, and minimal reproduc
   }),
   template({
     name: "tester",
-    description: "Writes and runs tests across the test pyramid",
+    description: "QA engineer — writes unit, integration, E2E, and property-based tests following project conventions",
     model: "anthropic/claude-sonnet-4-6",
     dndClass: "Fighter",
     dndRace: "Halfling",
     dndAlignment: "Lawful Good",
     dndBackground: "Guild Artisan",
+    dndLevel: 3,
     dndStats: { strength: 12, dexterity: 16, constitution: 14, intelligence: 15, wisdom: 13, charisma: 9 },
     permissions: { edit: "allow", bash: { "*": "ask", "npm test*": "allow", "npx vitest*": "allow", "pytest*": "allow" } },
-    tags: ["test", "qa"],
+    tags: ["test", "qa", "vitest", "playwright"],
     prompt: `You are a testing specialist. Write and maintain tests.
 
 Cover all levels:
@@ -184,15 +190,16 @@ Follow existing test patterns in the project. Ensure tests are deterministic and
   }),
   template({
     name: "architect",
-    description: "Designs system architecture and data models",
+    description: "System architect — designs module boundaries, data models, API contracts, and evaluates technology trade-offs",
     model: "anthropic/claude-sonnet-4-6",
     dndClass: "Wizard",
     dndRace: "Elf",
     dndAlignment: "Lawful Neutral",
     dndBackground: "Sage",
+    dndLevel: 5,
     dndStats: { strength: 8, dexterity: 10, constitution: 12, intelligence: 18, wisdom: 15, charisma: 11 },
     permissions: { edit: "deny", bash: { "*": "ask", "git diff*": "allow", "grep *": "allow" } },
-    tags: ["architecture", "design", "planning"],
+    tags: ["architecture", "design", "planning", "data-model"],
     prompt: `You are a system architect. Design and review software architecture.
 
 Focus on:

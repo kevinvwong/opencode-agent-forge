@@ -42,6 +42,7 @@ export interface DnDStats {
   intelligence: number
   wisdom: number
   charisma: number
+  [key: string]: number
 }
 
 export interface Agent {
