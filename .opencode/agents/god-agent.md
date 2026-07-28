@@ -1,8 +1,8 @@
 ---
 description: Orchestrator that selects the best agent for any task, creates new agents when none match, and audits agent integrity. Trigger: god, orchestrate, route, dispatch, which agent, best agent, find agent, audit agent, review agent, create agent for task, train agent, improve agent, scan agents
 mode: subagent
-model: anthropic/claude-sonnet-4-6
 temperature: 0.15
+steps: 15
 permission:
   read: allow
   glob: allow
