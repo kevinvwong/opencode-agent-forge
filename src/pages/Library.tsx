@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAgents } from "../db/hooks.ts"
+import { useAgents, saveAgent } from "../db/hooks.ts"
 import { deleteAgent, duplicateAgent } from "../db/hooks.ts"
 import { downloadAllAgents } from "../utils/export.ts"
+import { parseAgentMarkdown, readFileAsText } from "../utils/import.ts"
 import { getClassTheme } from "../utils/classTheme.ts"
 import { MODE_CLASS_MAP } from "../types/agent.ts"
 import AgentCard from "../components/AgentCard.tsx"
+import { useToast } from "../components/Toast.tsx"
 
 type SortKey = "name" | "updatedAt" | "sessionCount" | "dndLevel" | "createdAt"
 type ViewMode = "grid" | "list"
@@ -55,14 +57,48 @@ export default function Library() {
     return result
   }, [agents, search, sortBy, sortDir, filterMode])
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { toast } = useToast()
+
   const handleDelete = async (id: string) => {
     await deleteAgent(id)
+    toast("Agent deleted", "error")
     refresh()
   }
 
   const handleDuplicate = async (agent: typeof agents[0]) => {
-    await duplicateAgent(agent)
+    const dup = await duplicateAgent(agent)
+    toast(`Duplicated as "${dup.name}"`, "success")
     refresh()
+  }
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    let imported = 0
+    for (const file of Array.from(files)) {
+      try {
+        const text = await readFileAsText(file)
+        const partial = parseAgentMarkdown(text, file.name)
+        const agent = {
+          ...partial,
+          id: partial.id || crypto.randomUUID(),
+          name: partial.name || file.name.replace(/\.md$/i, ""),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          isTemplate: false,
+        } as import("../types/agent.ts").Agent
+        await saveAgent(agent)
+        imported++
+      } catch (err) {
+        toast(`Failed to import ${file.name}: ${err}`, "error")
+      }
+    }
+    if (imported > 0) {
+      toast(`Imported ${imported} agent${imported > 1 ? "s" : ""}`, "success")
+      refresh()
+    }
+    if (e.target) e.target.value = ""
   }
 
   const toggleSortDir = () => setSortDir((d) => d === "desc" ? "asc" : "desc")
@@ -107,6 +143,17 @@ export default function Library() {
           </p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".md"
+            multiple
+            onChange={handleImport}
+            style={{ display: "none" }}
+          />
+          <button className="btn-ghost" onClick={() => fileInputRef.current?.click()} style={{ fontSize: "0.8rem" }}>
+            Import .md
+          </button>
           <button className="btn-ghost" onClick={() => { downloadAllAgents(agents); void 0 }} style={{ fontSize: "0.8rem" }}>
             Export
           </button>
