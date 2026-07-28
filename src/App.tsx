@@ -5,6 +5,7 @@ import { ToastProvider } from "./components/Toast.tsx"
 import Dashboard from "./pages/Dashboard.tsx"
 import Library from "./pages/Library.tsx"
 import Editor from "./pages/Editor.tsx"
+import Router from "./pages/Router.tsx"
 import { db } from "./db/schema.ts"
 import { TEMPLATES } from "./data/templates.ts"
 
@@ -34,9 +35,10 @@ export default function App() {
     <ToastProvider>
       <Layout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/editor/:id" element={<Editor />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/router" element={<Router />} />
+        <Route path="/library" element={<Library />} />
+        <Route path="/editor/:id" element={<Editor />} />
         </Routes>
       </Layout>
     </ToastProvider>
