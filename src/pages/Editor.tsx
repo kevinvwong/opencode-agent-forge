@@ -121,17 +121,12 @@ export default function Editor() {
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 4, marginBottom: "1.25rem", borderBottom: "1px solid #2a2a4e" }}>
+      <div style={{ display: "flex", gap: 2, marginBottom: "1.25rem", borderBottom: "1px solid var(--color-border)" }}>
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
-            style={{
-              background: "none", border: "none", padding: "0.5rem 1rem",
-              color: activeTab === t.id ? "#d4a843" : "#6a6a8e",
-              borderBottom: activeTab === t.id ? "2px solid #d4a843" : "2px solid transparent",
-              cursor: "pointer", fontFamily: "var(--font-serif)", fontSize: "0.9rem", transition: "all 0.15s",
-            }}
+            className={`tab${activeTab === t.id ? " active" : ""}`}
           >{t.label}</button>
         ))}
       </div>

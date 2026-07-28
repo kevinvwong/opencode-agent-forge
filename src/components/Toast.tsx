@@ -32,9 +32,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const colorMap: Record<ToastType, { bg: string; border: string; icon: string }> = {
-    success: { bg: "rgba(22,163,74,0.15)", border: "#16a34a", icon: "✓" },
-    error: { bg: "rgba(220,38,38,0.15)", border: "#dc2626", icon: "✕" },
-    info: { bg: "rgba(212,168,67,0.15)", border: "#d4a843", icon: "ℹ" },
+    success: { bg: "rgba(0,204,102,0.12)", border: "var(--color-accent)", icon: ">" },
+    error: { bg: "rgba(255,51,68,0.12)", border: "var(--color-danger)", icon: "!" },
+    info: { bg: "rgba(51,153,255,0.12)", border: "var(--color-info)", icon: "i" },
   }
 
   return (
@@ -47,23 +47,24 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
               key={msg.id}
               style={{
-                background: "#1a1a2e",
+                background: "var(--color-bg-elevated)",
                 border: `1px solid ${c.border}`,
-                borderRadius: 8,
-                padding: "0.5rem 0.75rem",
+                borderRadius: 4,
+                padding: "0.45rem 0.75rem",
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                boxShadow: `0 4px 20px rgba(0,0,0,0.4), 0 0 12px ${c.border}30`,
+                boxShadow: `0 4px 24px rgba(0,0,0,0.5)`,
                 pointerEvents: "auto",
-                animation: "slideIn 0.2s ease-out",
-                fontSize: "0.85rem",
-                color: "#e2dcc8",
+                animation: "slideIn 0.15s ease-out",
+                fontSize: "0.75rem",
+                fontFamily: "var(--font-mono)",
+                color: "var(--color-text)",
                 minWidth: 200,
                 maxWidth: 360,
               }}
             >
-              <span style={{ color: c.border, fontWeight: 700, fontSize: "0.8rem" }}>{c.icon}</span>
+              <span style={{ color: c.border, fontWeight: 700, fontSize: "0.7rem" }}>{c.icon}</span>
               <span>{msg.text}</span>
             </div>
           )
