@@ -38,9 +38,11 @@ export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent
 
   const fmMatch = md.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
   if (fmMatch) {
-    agent.prompt = fmMatch[2].trim()
-    const fm = fmMatch[1]
-    const lines = fm.split("\n")
+    const promptMatch = fmMatch[2]
+    const fmMatch1 = fmMatch[1]
+    if (promptMatch === undefined || fmMatch1 === undefined) return agent
+    agent.prompt = promptMatch.trim()
+    const lines = fmMatch1.split("\n")
 
     let currentSection = ""
     const frontmatter: Record<string, string | Record<string, string>> = {}
@@ -58,11 +60,13 @@ export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent
 
       if (!val) {
         currentSection = key
-        nested[currentSection] = {}
-        frontmatter[currentSection] = nested[currentSection]
+        const empty: Record<string, string> = {}
+        nested[currentSection] = empty
+        frontmatter[currentSection] = empty
       } else if (currentSection && key && val) {
-        if (nested[currentSection]) {
-          nested[currentSection][key.replace(/"/g, "")] = val.replace(/"/g, "")
+        const section = nested[currentSection]
+        if (section) {
+          section[key.replace(/"/g, "")] = val.replace(/"/g, "")
         }
       } else {
         frontmatter[key] = val.replace(/"/g, "")

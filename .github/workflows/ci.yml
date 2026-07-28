@@ -19,11 +19,8 @@ jobs:
 
       - run: npm ci
 
-      - name: TypeScript check
-        run: npx tsc --noEmit
-
-      - name: Build
-        run: npm run build
+      - name: Full quality check
+        run: npm run workflow:all
 
   deploy:
     needs: quality

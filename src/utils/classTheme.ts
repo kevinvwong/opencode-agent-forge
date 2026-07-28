@@ -39,7 +39,7 @@ export const CLASS_THEMES: Record<string, ClassTheme> = {
 
 export function getClassTheme(mode: AgentMode): ClassTheme {
   const className = MODE_CLASS_MAP[mode]
-  return CLASS_THEMES[className]
+  return CLASS_THEMES[className]!
 }
 
 export function getPermissionLevel(permissions: AgentPermissions, tool: string): PermissionLevel {

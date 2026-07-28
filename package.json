@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "check": "tsc --noEmit",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist",
+    "workflow:all": "npm run check && npm run build"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

@@ -13,13 +13,15 @@ const LEVEL_ORDER: PermissionLevel[] = ["allow", "ask", "deny"]
 
 function nextLevel(current: PermissionLevel | undefined): PermissionLevel {
   const idx = LEVEL_ORDER.indexOf(current ?? "deny")
-  return LEVEL_ORDER[(idx + 1) % LEVEL_ORDER.length]
+  return LEVEL_ORDER[(idx + 1) % LEVEL_ORDER.length]!
 }
 
 export default function PermissionsPanel({ permissions, onChange, readonly }: Props) {
   const getLevel = (tool: string): PermissionLevel => {
     const v = permissions[tool]
-    if (v === "allow" || v === "ask" || v === "deny") return v
+    if (v === "allow") return "allow"
+    if (v === "ask") return "ask"
+    if (v === "deny") return "deny"
     return "deny"
   }
 
