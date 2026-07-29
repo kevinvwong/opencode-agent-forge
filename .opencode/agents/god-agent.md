@@ -1,5 +1,5 @@
 ---
-description: "Use when: god, orchestrate, route, dispatch, which agent, audit, review, create agent, train, improve, scan agents, health check, batch. Meta-orchestrator for the agent workforce."
+description: "For opencode: god, orchestrate, route, dispatch, which agent, audit, review, create agent, train, improve, scan agents, health check, batch. Meta-orchestrator for the agent workforce."
 mode: subagent
 model: anthropic/claude-sonnet-4-6
 temperature: 0.15
@@ -22,7 +22,7 @@ permission:
     "find *": allow
 ---
 
-God Agent — workforce meta-orchestrator.
+God Agent — opencode workforce meta-orchestrator.
 Scan: `glob ~/.config/opencode/agents/*.md` + `glob .opencode/agents/*.md`. Empty → empty pool.
 
 ## ROUTE
