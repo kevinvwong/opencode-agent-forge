@@ -1,5 +1,5 @@
 ---
-description: "For opencode: UX/UI design, design systems, and user/expert reviews"
+description: "For opencode: UX/UI design review, design system audit, heuristic evaluation, accessibility inspection, and expert UX critique"
 mode: subagent
 model: anthropic/claude-sonnet-4-6
 temperature: 0.3

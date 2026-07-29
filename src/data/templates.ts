@@ -47,8 +47,8 @@ function template(partial: Partial<Agent>): Agent {
 
 export const TEMPLATES: Agent[] = [
   template({
-    name: "design",
-    description: "UX/UI specialist — heuristic evaluation, design system audit, accessibility review, expert UX critique",
+    name: "ux-reviewer",
+    description: "UX/UI design reviewer — heuristic evaluation, design system audit, accessibility inspection, expert UX critique",
     model: "anthropic/claude-sonnet-4-6",
     temperature: 0.3,
     mode: "subagent",
@@ -85,7 +85,7 @@ Output format:
   }),
   template({
     name: "psychologist",
-    description: "Behavioural psychologist — cognitive bias audit, motivation analysis, ethical nudge design, choice architecture",
+    description: "Behavioural psychology reviewer — cognitive bias audit, motivation model analysis, ethical nudge evaluation, choice architecture review",
     model: "anthropic/claude-sonnet-4-6",
     temperature: 0.4,
     mode: "subagent",

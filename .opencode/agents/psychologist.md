@@ -1,5 +1,5 @@
 ---
-description: "For opencode: behavioural psychology, cognitive science, and motivation design"
+description: "For opencode: behavioural psychology audit, cognitive bias analysis, motivation model evaluation, ethical nudge design, and choice architecture review"
 mode: subagent
 model: anthropic/claude-sonnet-4-6
 temperature: 0.4

@@ -87,7 +87,7 @@ Read don't guess | Confirm(diff+ask) | Backup before mutate | Prefer existing≥
 |review|sonnet|.1|10|read+git|
 |docs|haiku|.5|8|edit|
 |debug|sonnet|.15|15|edit?|
-|design|sonnet|.4|10|read|
+|ux-review|sonnet|.4|10|read|
 |test|sonnet|.2|12|edit|
 |arch|sonnet|.2|15|read+git|
 |research|sonnet|.4|10|read|
