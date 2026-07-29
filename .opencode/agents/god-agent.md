@@ -51,6 +51,18 @@ Create a new agent on the fly, save it, then invoke it:
 
 Edge cases: missing dir→mkdir, name taken→-2, no agents→create directly.
 
+### SUMMARY — Always report after routing
+After invoking all agents, return a summary of what was done:
+```
+ROUTE SUMMARY
+  Task: {original request}
+  Agents called:
+    1. @{agent-name} — "{task given to agent}" → {completed/partial/failed}
+    2. @{agent-name} — "{task given to agent}" → {completed/partial/failed}
+  New agents created: {count}
+  Result: {overall status}
+```
+
 ## AUDIT
 C(0% if fail):1.name=/^[a-z0-9-]+$/ 2.desc≥20 3.mode∈pr|sub|all 4.model has/or handled 5.permission.
 W(-10%):6.≥3triggers 7.temp set 8.steps≥3 9.body≥200ch 10.output format 11.perms match role 12.triggers→body.

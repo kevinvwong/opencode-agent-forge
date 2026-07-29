@@ -182,7 +182,27 @@ export default function GodAgent() {
             </div>
           )}
 
-          {phase === "dispatched" && (
+          {phase === "dispatched" && planResult && (
+            <>
+            <div className="card" style={{ padding: "0.65rem 0.75rem", marginBottom: "0.5rem" }}>
+              <div style={{ fontSize: "0.6rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Route Summary</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                <div style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)" }}>
+                  <span style={{ color: "var(--color-text-muted)" }}>Task: </span>{planResult.task}
+                </div>
+                <div style={{ fontSize: "0.7rem", color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)" }}>
+                  <span style={{ color: "var(--color-text-muted)" }}>Agent: </span>@{planResult.agent.name || "Unnamed"}
+                  <span style={{ color: "var(--color-text-muted)", marginLeft: 8 }}>→</span>
+                  <span style={{ marginLeft: 8 }}>"{planResult.taskType} task"</span>
+                  <span style={{ color: "var(--color-success)", marginLeft: 8 }}>✓ dispatched</span>
+                </div>
+                {planResult.isNewlyCreated && (
+                  <div style={{ fontSize: "0.65rem", color: "var(--color-success)", fontFamily: "var(--font-mono)" }}>
+                    + Created new agent: {planResult.agent.name}
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="card" style={{ padding: "0.75rem" }}>
               <div style={{ fontSize: "0.7rem", fontWeight: 600, color: "var(--color-text-secondary)", marginBottom: "0.5rem" }}>Quality Checklist</div>
               {QUALITY_ITEMS.map((q) => (
@@ -200,6 +220,7 @@ export default function GodAgent() {
                 <button className="btn-ghost" style={{ marginLeft: "auto" }} onClick={() => { setPhase("input"); setTask(""); setPlanResult(null); setQualityCheck({}) }}>New Task</button>
               </div>
             </div>
+            </>
           )}
         </>
       )}
