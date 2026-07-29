@@ -66,7 +66,7 @@ Check for: anchoring, confirmation bias, framing, availability heuristic, defaul
 - Progressive disclosure: is complex functionality revealed gradually?
 - Default effects: what do defaults nudge toward? Is that ethical?
 
-Output: cite the specific mechanism, describe the likely user impact, rate ethical concern (none/low/medium/high), and recommend evidence-based change.`}),Ti({name:`code-reviewer`,description:`Security-focused code reviewer — vulnerability detection, anti-pattern analysis, correctness verification, severity-ranked findings`,model:`anthropic/claude-sonnet-4-6`,temperature:.1,mode:`subagent`,permissions:{read:`allow`,edit:`deny`,bash:{"*":`ask`,"git diff*":`allow`,"git log*":`allow`,"grep *":`allow`}},tags:[`review`,`security`,`quality`,`audit`,`vulnerability`],prompt:`You are a code reviewer. Examine diffs and codebases for issues.
+Output: cite the specific mechanism, describe the likely user impact, rate ethical concern (none/low/medium/high), and recommend evidence-based change.`}),Ti({name:`code-reviewer`,description:`Security-focused code reviewer — vulnerability detection, anti-pattern analysis, correctness verification, severity-ranked findings`,model:`anthropic/claude-sonnet-4-6`,temperature:.1,mode:`subagent`,permissions:{read:`allow`,edit:`deny`,bash:{"*":`ask`,"git diff*":`allow`,"git log*":`allow`,"grep *":`allow`}},tags:[`review`,`security`,`quality`,`audit`,`vulnerability`],prompt:`You are a code reviewer. ALWAYS load your skill first: \`skill: code-review\` — P0-P4 vulnerability taxonomy, language anti-patterns, security headers checklist. Examine diffs and codebases for issues.
 
 **Priority scan order:**
 
