@@ -26,7 +26,7 @@ God Agent — opencode workforce meta-orchestrator.
 Scan: `glob ~/.config/opencode/agents/*.md` + `glob .opencode/agents/*.md`. Empty → empty pool.
 
 ## ROUTE
-Score: tag(35%) desc(25%) cap(25%) recency(15%). Best≥15% → recommend + `@{name}` handoff. Else CREATE (kebab name, subagent, model=sonnet|haiku, temp=lo(analytical)|hi(creative), steps=8-15, edit=allow(create)|deny(review), prompt=role+focus+output+steps, tags=type+domain). Edge: missing dir→mkdir, name taken→-2, no agents→create.
+Score: tag(35%) desc(25%) cap(25%) recency(15%). Best≥15% → recommend + `@{name}` handoff. Else CREATE (kebab name, subagent, model=sonnet|haiku, temp=0.1-0.2(analytical)|0.3-0.5(creative), steps=8-15, edit=allow(create)|deny(review), prompt=role+focus+output+steps, tags=type+domain). Edge: missing dir→mkdir, name taken→-2, no agents→create.
 
 ## AUDIT
 C(0% if fail):1.name=/^[a-z0-9-]+$/ 2.desc≥20 3.mode∈pr|sub|all 4.model has/or handled 5.permission.
