@@ -33,9 +33,11 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
     return (
       <div
         onClick={handleClick}
+        onKeyDown={(e) => { if (e.key === 'Enter') handleClick() }}
+        role="button"
+        tabIndex={0}
         className="data-row"
         style={{ cursor: "pointer", borderLeft: `2px solid ${modeColor}`, gap: 8, padding: "0.3rem 0.55rem", "--mode-color": modeColor } as React.CSSProperties}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.setProperty("--mode-color", modeColor) }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -62,6 +64,9 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
   return (
     <div
       onClick={handleClick}
+      onKeyDown={(e) => { if (e.key === 'Enter') handleClick() }}
+      role="button"
+      tabIndex={0}
       className="card-elevated"
       style={{ cursor: "pointer", overflow: "hidden", display: "flex", flexDirection: "column", "--mode-color": modeColor } as React.CSSProperties}
     >

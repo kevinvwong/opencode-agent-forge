@@ -108,7 +108,7 @@ export default function Library() {
   const clearFilters = () => { setSearch(""); setFilterMode("all") }
 
   if (loading) {
-    return <div style={{ color: "#8a8aae", textAlign: "center", paddingTop: "6rem", fontSize: "1.1rem" }}>
+    return <div style={{ color: "var(--color-text-muted)", textAlign: "center", paddingTop: "6rem", fontSize: "1.1rem" }}>
       Loading agent library...
     </div>
   }
@@ -117,10 +117,10 @@ export default function Library() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
         <div>
-          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.8rem", fontWeight: 700, color: "#e2dcc8", margin: 0 }}>
+          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.8rem", fontWeight: 700, color: "var(--color-text)", margin: 0 }}>
             Agent Library
           </h1>
-          <p style={{ color: "#8a8aae", fontSize: "0.8rem", margin: "4px 0 0" }}>
+          <p style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", margin: "4px 0 0" }}>
             {filtered.length} / {agents.length} agents
             {agents.length > 0 && (
               <span style={{ marginLeft: 8 }}>
@@ -139,11 +139,11 @@ export default function Library() {
 
       <div style={{
         display: "flex", gap: 6, marginBottom: "0.75rem", flexWrap: "wrap",
-        padding: "0.5rem 0.75rem", background: "rgba(255,255,255,0.02)", borderRadius: 8,
-        border: "1px solid #2a2a4e", alignItems: "center",
+        padding: "0.5rem 0.75rem",         background: "var(--color-bg-base)", borderRadius: 8,
+        border: "1px solid var(--color-border)", alignItems: "center",
       }}>
         <div style={{ position: "relative", flex: "1 1 200px", minWidth: 140 }}>
-          <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", fontSize: "0.75rem", color: "#5a5a7e", pointerEvents: "none" }}>🔍</span>
+          <span style={{ position: "absolute", left: 8, top: "50%", transform: "translateY(-50%)", fontSize: "0.75rem", color: "var(--color-text-muted)", pointerEvents: "none" }}>🔍</span>
           <input className="input-field" placeholder="Search name, tags, model..."
             value={search} onChange={(e) => setSearch(e.target.value)}
             style={{ paddingLeft: 26, fontSize: "0.8rem" }} />
@@ -172,23 +172,25 @@ export default function Library() {
           {sortDir === "desc" ? "↓" : "↑"}
         </button>
 
-        <div style={{ width: 1, height: 20, background: "#2a2a4e" }} />
+        <div style={{ width: 1, height: 20, background: "var(--color-border)" }} />
 
         <button onClick={() => setView("grid")} className="btn-ghost"
           style={{ fontSize: "0.75rem", padding: "0.35rem 0.5rem",
-            background: view === "grid" ? "rgba(212,168,67,0.1)" : "transparent",
-            borderColor: view === "grid" ? "#d4a843" : "#2a2a4e" }}>▦</button>
+            background: view === "grid" ? "var(--color-accent-dim)" : "transparent",
+            borderColor: view === "grid" ? "var(--color-accent)" : "var(--color-border)" }}
+          aria-label="Grid view">▦</button>
         <button onClick={() => setView("list")} className="btn-ghost"
           style={{ fontSize: "0.75rem", padding: "0.35rem 0.5rem",
-            background: view === "list" ? "rgba(212,168,67,0.1)" : "transparent",
-            borderColor: view === "list" ? "#d4a843" : "#2a2a4e" }}>☰</button>
+            background: view === "list" ? "var(--color-accent-dim)" : "transparent",
+            borderColor: view === "list" ? "var(--color-accent)" : "var(--color-border)" }}
+          aria-label="List view">☰</button>
       </div>
 
       {hasActiveFilters && (
         <div style={{ display: "flex", gap: 4, marginBottom: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
           {search && (
-            <span style={{ fontSize: "0.65rem", background: "rgba(212,168,67,0.1)", color: "#d4a843", padding: "2px 8px", borderRadius: 12, display: "flex", alignItems: "center", gap: 4 }}>
-              "{search}" <span onClick={() => setSearch("")} style={{ cursor: "pointer", marginLeft: 2 }}>✕</span>
+            <span className="chip">
+              "{search}" <span onClick={() => setSearch("")} style={{ cursor: "pointer", marginLeft: 2 }} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') setSearch("") }}>✕</span>
             </span>
           )}
           {filterMode !== "all" && (
@@ -197,17 +199,17 @@ export default function Library() {
               <span onClick={() => setFilterMode("all")} style={{ cursor: "pointer", marginLeft: 2 }}>✕</span>
             </span>
           )}
-          <span onClick={clearFilters} style={{ fontSize: "0.6rem", color: "#5a5a7e", cursor: "pointer", textDecoration: "underline", marginLeft: 4 }}>Clear all</span>
+          <span onClick={clearFilters} style={{ fontSize: "0.6rem", color: "var(--color-text-muted)", cursor: "pointer", textDecoration: "underline", marginLeft: 4 }}>Clear all</span>
         </div>
       )}
 
       {filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
           <div style={{ fontSize: "3rem", marginBottom: "0.75rem", opacity: 0.6 }}>{search ? "🔍" : "📭"}</div>
-          <h2 style={{ fontFamily: "var(--font-serif)", color: "#8a8aae", margin: "0 0 0.5rem", fontSize: "1.2rem" }}>
+          <h2 style={{ fontFamily: "var(--font-serif)", color: "var(--color-text-muted)", margin: "0 0 0.5rem", fontSize: "1.2rem" }}>
             {search ? "No agents match your search" : "No agents yet"}
           </h2>
-          <p style={{ color: "#5a5a7e", fontSize: "0.8rem", marginBottom: "1rem" }}>
+          <p style={{ color: "var(--color-text-muted)", fontSize: "0.8rem", marginBottom: "1rem" }}>
             {search ? "Try different keywords or clear your filters" : "Create your first agent to get started"}
           </p>
           {search ? (
