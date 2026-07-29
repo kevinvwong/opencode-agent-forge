@@ -34,9 +34,8 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
       <div
         onClick={handleClick}
         className="data-row"
-        style={{ cursor: "pointer", borderLeft: `2px solid ${modeColor}`, gap: 8, padding: "0.3rem 0.55rem" }}
-        onMouseEnter={(e) => { e.currentTarget.style.borderColor = modeColor }}
-        onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-border)" }}
+        style={{ cursor: "pointer", borderLeft: `2px solid ${modeColor}`, gap: 8, padding: "0.3rem 0.55rem", "--mode-color": modeColor } as React.CSSProperties}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.setProperty("--mode-color", modeColor) }}
       >
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -64,9 +63,7 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
     <div
       onClick={handleClick}
       className="card-elevated"
-      style={{ cursor: "pointer", overflow: "hidden", display: "flex", flexDirection: "column" }}
-      onMouseEnter={(e) => { e.currentTarget.style.borderColor = modeColor }}
-      onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--color-border)" }}
+      style={{ cursor: "pointer", overflow: "hidden", display: "flex", flexDirection: "column", "--mode-color": modeColor } as React.CSSProperties}
     >
       <div style={{
         background: `linear-gradient(135deg, ${modeColor} 0%, ${modeColor}bb 100%)`,
