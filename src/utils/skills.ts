@@ -76,7 +76,7 @@ export function getSkillNames(): string[] {
 
 export function getSkillsForLane(lane: string): SkillInfo[] {
   const laneMap: Record<string, string[]> = {
-    "ux-review": ["ui-ux-pro-max", "design-system", "brand", "ui-styling", "design", "banner-design", "slides"],
+    "ux-review": ["ui-ux-pro-max", "design-system", "ui-styling"],
     "design": ["ui-ux-pro-max", "design-system", "brand", "ui-styling", "design", "banner-design", "slides"],
     "psychology": ["behavioural-psychology"],
     "review": ["code-review"],
