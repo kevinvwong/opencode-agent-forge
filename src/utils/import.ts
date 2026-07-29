@@ -22,6 +22,7 @@ export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent
     plugins: [],
     commands: {},
     tags: [],
+    skills: [],
     capabilities: computeCapabilities({
       model: "anthropic/claude-sonnet-4-6",
       mode: "subagent",

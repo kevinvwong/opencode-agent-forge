@@ -70,6 +70,7 @@ export interface Agent {
   plugins: string[]
   commands: Record<string, string>
   tags: string[]
+  skills: string[]
   capabilities: AgentCapabilities
   createdAt: string
   updatedAt: string

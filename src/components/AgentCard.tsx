@@ -136,6 +136,15 @@ export default function AgentCard({ agent, onDelete, onDuplicate, view = "grid" 
           })}
         </div>
 
+        {agent.skills && agent.skills.length > 0 && (
+          <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+            {agent.skills.map((s) => (
+              <span key={s} style={{ fontSize: "0.5rem", padding: "1px 6px", borderRadius: 3, background: "var(--color-accent-dim)", color: "var(--color-accent)", fontFamily: "var(--font-mono)", letterSpacing: 0.3 }}>
+                ◆ {s}
+              </span>
+            ))}
+          </div>
+        )}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 4, paddingTop: 3, borderTop: "1px solid var(--color-border)" }}>
           <div style={{ display: "flex", gap: 6, fontSize: "0.65rem" }}>
             <span className="metric">❤{metrics.sessionCapacity}</span>

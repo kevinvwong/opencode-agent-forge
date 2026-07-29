@@ -70,6 +70,7 @@ export function createAgentForTask(task: string, taskType: TaskType): Agent {
     hidden: false, disabled: false, color: null, permissions: perms,
     mcpServers: {}, plugins: [], commands: {},
     tags: [taskType, ...words],
+    skills: [],
     capabilities: computeCapabilities({
       model: c.model, mode: "subagent", permissions: perms,
       steps: c.steps, temperature: c.temp, prompt,

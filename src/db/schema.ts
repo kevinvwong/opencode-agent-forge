@@ -7,7 +7,7 @@ export class AgentDB extends Dexie {
   constructor() {
     super("AgentForge")
     this.version(1).stores({
-      agents: "id, name, mode, tags, createdAt, updatedAt, sessionCount, isTemplate, lastUsed",
+      agents: "id, name, mode, tags, skills, createdAt, updatedAt, sessionCount, isTemplate, lastUsed",
     })
   }
 }

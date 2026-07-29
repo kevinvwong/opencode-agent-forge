@@ -33,6 +33,7 @@ function template(partial: Partial<Agent>): Agent {
     plugins: [],
     commands: {},
     tags: [],
+    skills: [],
     capabilities: computeCaps(partial),
     createdAt: now,
     updatedAt: now,

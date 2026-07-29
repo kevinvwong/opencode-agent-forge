@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useToast } from "../components/Toast.tsx"
 import type { Agent, AgentPermissions } from "../types/agent.ts"
 import { generateId, computeCapabilities, MODE_LABELS } from "../types/agent.ts"
+import { getAvailableSkills } from "../utils/skills.ts"
 import { useAgent, saveAgent } from "../db/hooks.ts"
 import { downloadAgentFile } from "../utils/export.ts"
 import StatBlock from "../components/StatBlock.tsx"
@@ -48,6 +49,7 @@ export default function Editor() {
         plugins: [],
         commands: {},
         tags: [],
+        skills: [],
         capabilities: computeCapabilities({
           model: "anthropic/claude-sonnet-4-6",
           mode: "subagent",
@@ -198,6 +200,33 @@ export default function Editor() {
                 <input className="input-field" value={agent.tags.join(", ")}
                   onChange={(e) => update("tags", e.target.value.split(",").map((t) => t.trim()).filter(Boolean))}
                   placeholder="review, security, quality" />
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <label style={{ fontSize: "0.7rem", color: "#8a8aae", display: "block", marginBottom: 4 }}>Skills</label>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  {getAvailableSkills().map((skill) => {
+                    const active = agent.skills?.includes(skill.name) ?? false
+                    return (
+                      <button
+                        key={skill.name}
+                        onClick={() => {
+                          const current = agent.skills ?? []
+                          update("skills", active ? current.filter((s) => s !== skill.name) : [...current, skill.name])
+                        }}
+                        style={{
+                          padding: "3px 10px", borderRadius: 4, fontSize: "0.7rem", cursor: "pointer", fontFamily: "var(--font-mono)",
+                          background: active ? "var(--color-accent)" : "var(--color-bg-hover)",
+                          color: active ? "#fff" : "var(--color-text-secondary)",
+                          border: `1px solid ${active ? "var(--color-accent)" : "var(--color-border)"}`,
+                          transition: "all 0.1s",
+                        }}
+                        title={skill.description}
+                      >
+                        ◆ {skill.name}
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
             </div>
           </div>
