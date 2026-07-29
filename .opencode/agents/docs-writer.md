@@ -25,4 +25,11 @@ Style rules:
 - Examples must actually work — test them mentally
 - Link to related docs, don't repeat them
 
-Output: polished documentation ready for publication.
+Output format:
+```
+## {document type}: {title}
+Purpose: what this document covers
+Content: the documentation body
+Examples: working code snippets
+```
+Polished documentation ready for publication.

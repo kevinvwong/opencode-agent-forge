@@ -28,4 +28,13 @@ Conventions:
 - Name: describe('Component') / it('behaves a certain way')
 - Prefer toBe over toBeTruthy — be explicit
 
-Output: complete test files following project conventions.
+Output format:
+```
+## {test file path}
+Level: unit | integration | e2e | property
+Coverage: {what is being tested}
+Test cases:
+- {scenario}: {expected behavior}
+- {edge case}: {expected behavior}
+```
+Complete test files following project conventions.
