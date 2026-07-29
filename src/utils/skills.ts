@@ -72,6 +72,30 @@ const SKILL_MAP: Record<string, SkillInfo> = {
     path: "~/.config/opencode/skills/threat-modeler/SKILL.md",
     source: "custom-built (PentAGI-inspired)",
   },
+  "ci-cd-pipeline-builder": {
+    name: "ci-cd-pipeline-builder",
+    description: "CI/CD pipeline builder — analyze stack, generate GitHub Actions / GitLab CI configs, deployment pipeline design",
+    path: "~/.config/opencode/skills/ci-cd-pipeline-builder/SKILL.md",
+    source: "alirezarezvani/claude-skills (21k stars)",
+  },
+  "performance-profiler": {
+    name: "performance-profiler",
+    description: "Performance profiler — performance profiling, bottleneck detection, optimization strategies, load testing",
+    path: "~/.config/opencode/skills/performance-profiler/SKILL.md",
+    source: "alirezarezvani/claude-skills (21k stars)",
+  },
+  "skill-tester": {
+    name: "skill-tester",
+    description: "Skill tester — test strategy, coverage analysis, test quality assessment, skill evaluation",
+    path: "~/.config/opencode/skills/skill-tester/SKILL.md",
+    source: "alirezarezvani/claude-skills (21k stars)",
+  },
+  "sql-database-assistant": {
+    name: "sql-database-assistant",
+    description: "SQL database assistant — SQL optimization, schema analysis, query performance, indexing advice",
+    path: "~/.config/opencode/skills/sql-database-assistant/SKILL.md",
+    source: "alirezarezvani/claude-skills (21k stars)",
+  },
   "api-design-reviewer": {
     name: "api-design-reviewer",
     description: "API design review — REST API linter, breaking change detector, design scorecard",
@@ -113,9 +137,12 @@ export function getSkillsForLane(lane: string): SkillInfo[] {
     "security": ["code-review", "skill-security-auditor", "threat-modeler"],
     "docs": [],
     "debug": [],
-    "test": [],
+    "test": ["skill-tester"],
     "arch": ["api-design-reviewer", "database-designer", "migration-architect"],
     "research": [],
+    "devops": ["ci-cd-pipeline-builder"],
+    "perf": ["performance-profiler"],
+    "data": ["sql-database-assistant"],
     "general": [],
   }
   const names = laneMap[lane] ?? []
