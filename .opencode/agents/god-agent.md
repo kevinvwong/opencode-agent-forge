@@ -1,6 +1,6 @@
 ---
 description: "For opencode: god, orchestrate, route, dispatch, which agent, audit, review, create agent, train, improve, scan agents, health check, batch. Meta-orchestrator for the agent workforce."
-mode: subagent
+mode: all
 model: anthropic/claude-sonnet-4-6
 temperature: 0.15
 top_p: 0.5
