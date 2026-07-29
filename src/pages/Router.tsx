@@ -15,7 +15,7 @@ export default function Router() {
 
   const activeAgents = useMemo(() => agents.filter((a) => !a.disabled), [agents])
 
-  const handleRoute = async () => {
+  const handleRoute = () => {
     if (!task.trim()) {
       toast("Enter a task description first", "error")
       return

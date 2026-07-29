@@ -32,7 +32,7 @@ export default function GodAgent() {
   const [expandedReview, setExpandedReview] = useState<string | null>(null)
 
   const customAgents = useMemo(() => agents.filter((a) => !a.isTemplate && !a.disabled), [agents])
-  const reviews = useMemo(() => customAgents.length > 0 ? reviewAllAgents(agents) : [], [agents])
+  const reviews = useMemo(() => reviewAllAgents(agents), [agents])
 
   const avgScore = reviews.length > 0 ? Math.round(reviews.reduce((s, r) => s + r.score, 0) / reviews.length) : 0
   const totalIssues = reviews.reduce((s, r) => s + r.issues, 0)
@@ -222,7 +222,7 @@ export default function GodAgent() {
               <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                 {allPassed ? <span style={{ fontSize: "0.7rem", color: "var(--color-success)", fontFamily: "var(--font-mono)" }}>✓ All checks passed</span>
                   : <span style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>Complete checks to confirm quality</span>}
-                <button className="btn-ghost" style={{ marginLeft: "auto" }} onClick={() => { setPhase("input"); setTask(""); setPlanResult(null) }}>New Task</button>
+                <button className="btn-ghost" style={{ marginLeft: "auto" }} onClick={() => { setPhase("input"); setTask(""); setPlanResult(null); setQualityCheck({}) }}>New Task</button>
               </div>
             </div>
           )}
