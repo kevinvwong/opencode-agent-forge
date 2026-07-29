@@ -1,5 +1,5 @@
 import type { Agent } from "../types/agent.ts"
-import { generateId } from "../types/agent.ts"
+import { generateId, computeCapabilities } from "../types/agent.ts"
 import { rankAgents } from "./router.ts"
 
 export type TaskType = "review" | "write" | "debug" | "design" | "test" | "architect" | "research" | "general"
@@ -119,7 +119,7 @@ export function createAgentForTask(task: string, taskType: TaskType): Agent {
     hidden: false, disabled: false, color: null,
     permissions: generatePermissions(taskType),
     mcpServers: {}, plugins: [], commands: {}, tags: [taskType, ...generateAgentName(task, taskType).split("-").slice(1)],
-    capabilities: { toolAccess: 10, responseAgility: 10, sessionResilience: 10, modelIntelligence: 10, contextAwareness: 10, collaboration: 10 },
+    capabilities: computeCapabilities({ model: c.model, mode: "subagent", permissions: generatePermissions(taskType), steps: c.steps, temperature: c.temp[0], prompt: generatePrompt(task, taskType), description: `Auto-generated ${taskType} agent for: ${task.slice(0, 80)}`, tags: [taskType] }),
     createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     sessionCount: 0, tokenCount: 0, lastUsed: null, isTemplate: false,
   }
