@@ -155,7 +155,6 @@ export default function Library() {
           <option value="all">All Modes</option>
           <option value="primary">Primary</option>
           <option value="subagent">Subagent</option>
-          <option value="all">All</option>
         </select>
 
         <select className="input-field" value={sortBy}

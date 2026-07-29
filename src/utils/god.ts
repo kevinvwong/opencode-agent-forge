@@ -72,7 +72,7 @@ export function createAgentForTask(task: string, taskType: TaskType): Agent {
     tags: [taskType, ...words],
     capabilities: computeCapabilities({
       model: c.model, mode: "subagent", permissions: perms,
-      steps: c.steps, temperature: c.temp, prompt, description, tags: [taskType],
+      steps: c.steps, temperature: c.temp, prompt,
     }),
     createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     sessionCount: 0, tokenCount: 0, lastUsed: null, isTemplate: false,

@@ -21,7 +21,7 @@ export default function App() {
         }
         setSeeded(true)
       })
-      .catch(() => setSeeded(true))
+      .catch((err) => { console.error("Seeding failed:", err); setSeeded(true) })
   }, [])
 
   if (!seeded) {

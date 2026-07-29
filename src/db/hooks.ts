@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react"
 import { db } from "./schema.ts"
 import type { Agent } from "../types/agent.ts"
+import { generateId } from "../types/agent.ts"
 
 export function useAgents() {
   const [agents, setAgents] = useState<Agent[]>([])
@@ -63,7 +64,7 @@ export async function deleteAgent(id: string): Promise<void> {
 export async function duplicateAgent(agent: Agent): Promise<Agent> {
   const dup: Agent = {
     ...agent,
-    id: crypto.randomUUID(),
+    id: generateId(),
     name: `${agent.name} (copy)`,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

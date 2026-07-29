@@ -3,7 +3,7 @@ import type { Agent, PermissionLevel, BashPermission } from "../types/agent.ts"
 function formatPermission(value: PermissionLevel | BashPermission | undefined): string {
   if (!value) return "deny"
   if (typeof value === "string") return value
-  const lines = Object.entries(value).map(([k, v]) => `    "${k}": "${v}"`)
+  const lines = Object.entries(value).filter(([, v]) => v != null).map(([k, v]) => `    "${k}": "${v}"`)
   return `\n${lines.join("\n")}`
 }
 
@@ -30,7 +30,7 @@ export function agentToMarkdown(agent: Agent): string {
     agent.topP != null ? `top_p: ${agent.topP}` : null,
     agent.steps != null ? `steps: ${agent.steps}` : null,
     agent.hidden ? "hidden: true" : null,
-    agent.disabled ? "disable: true" : null,
+    agent.disabled ? "disabled: true" : null,
     agent.color ? `color: ${agent.color}` : null,
     permLines.length > 0 ? `permission:\n${permLines.join("\n")}` : null,
     "---",

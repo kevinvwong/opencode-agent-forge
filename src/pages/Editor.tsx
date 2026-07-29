@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { useToast } from "../components/Toast.tsx"
 import type { Agent, AgentPermissions } from "../types/agent.ts"
 import { generateId, computeCapabilities, MODE_LABELS } from "../types/agent.ts"
 import { useAgent, saveAgent } from "../db/hooks.ts"
@@ -11,6 +12,7 @@ import SkillProficiencies from "../components/SkillProficiencies.tsx"
 export default function Editor() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { toast } = useToast()
   const { agent: existing, loading } = useAgent(id)
   const isNew = id === "new" || !id
 
@@ -53,8 +55,6 @@ export default function Editor() {
           steps: null,
           temperature: null,
           prompt: "",
-          description: "",
-          tags: [],
         }),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -83,7 +83,7 @@ export default function Editor() {
       saveTimerRef.current = setTimeout(() => setSaved(false), 3000)
       if (isNew) navigate(`/editor/${agent.id}`, { replace: true })
     } catch (err) {
-      console.error("Failed to save agent:", err)
+      toast(`Failed to save: ${err}`, "error")
     }
     setSaving(false)
   }

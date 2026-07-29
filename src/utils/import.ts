@@ -29,8 +29,6 @@ export function parseAgentMarkdown(md: string, fileName?: string): Partial<Agent
       steps: null,
       temperature: null,
       prompt: "",
-      description: "",
-      tags: [],
     }),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

@@ -172,14 +172,16 @@ export function capModifier(score: number): number {
 type AgentLike = {
   model: string; mode: AgentMode; permissions: AgentPermissions
   steps: number | null; temperature: number | null
-  prompt: string; description: string; tags: string[]
+  prompt: string
 }
 
 function modelSpeedRank(m: string): number {
   const s = m.toLowerCase()
   if (s.includes("haiku")) return 5
   if (s.includes("sonnet")) return 3
-  return 1
+  if (s.includes("gpt")) return 3
+  if (s.includes("deepseek")) return 4
+  return 2
 }
 
 function modelTier(m: string): number {

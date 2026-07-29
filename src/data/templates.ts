@@ -11,8 +11,6 @@ function computeCaps(partial: Partial<Agent>): Agent["capabilities"] {
     steps: partial.steps ?? null,
     temperature: partial.temperature ?? null,
     prompt: partial.prompt || "",
-    description: partial.description || "",
-    tags: partial.tags || [],
   })
 }
 
