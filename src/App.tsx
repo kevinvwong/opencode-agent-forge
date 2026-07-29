@@ -8,6 +8,7 @@ import Editor from "./pages/Editor.tsx"
 import Router from "./pages/Router.tsx"
 import GodAgent from "./pages/GodAgent.tsx"
 import Skills from "./pages/Skills.tsx"
+import Teacher from "./pages/Teacher.tsx"
 import { db } from "./db/schema.ts"
 import { TEMPLATES } from "./data/templates.ts"
 
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/god" element={<GodAgent />} />
         <Route path="/router" element={<Router />} />
         <Route path="/skills" element={<Skills />} />
+        <Route path="/teacher" element={<Teacher />} />
         <Route path="/library" element={<Library />} />
         <Route path="/editor/:id" element={<Editor />} />
         </Routes>

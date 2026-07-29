@@ -2,28 +2,63 @@ export interface SkillInfo {
   name: string
   description: string
   path: string
+  source: string
 }
 
 const SKILL_MAP: Record<string, SkillInfo> = {
   "ui-ux-pro-max": {
     name: "ui-ux-pro-max",
-    description: "UI/UX design intelligence — 67 styles, 161 color palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 22 tech stacks. Full searchable database with BM25 reasoning engine.",
+    description: "UI/UX design intelligence — 67 styles, 161 color palettes, 57 font pairings, 99 UX guidelines, 25 chart types, 22 tech stacks",
     path: "~/.opencode/skills/ui-ux-pro-max/SKILL.md",
+    source: "nextlevelbuilder/ui-ux-pro-max-skill (111k stars)",
   },
   "design-system": {
     name: "design-system",
-    description: "Design system tokens — component specs, primitive/semantic tokens, Tailwind integration, slide generation",
+    description: "Design tokens — primitive/semantic/component tokens, CSS variables, spacing/typography scales, component specs",
     path: "~/.opencode/skills/design-system/SKILL.md",
+    source: "nextlevelbuilder/ui-ux-pro-max-skill",
+  },
+  "brand": {
+    name: "brand",
+    description: "Brand identity — voice, visual identity, messaging frameworks, asset management, style guides",
+    path: "~/.opencode/skills/brand/SKILL.md",
+    source: "nextlevelbuilder/ui-ux-pro-max-skill",
+  },
+  "banner-design": {
+    name: "banner-design",
+    description: "Banner design — social media, ads, website heroes, print. 22 styles across 10 platforms",
+    path: "~/.opencode/skills/banner-design/SKILL.md",
+    source: "nextlevelbuilder/ui-ux-pro-max-skill",
+  },
+  "design": {
+    name: "design",
+    description: "Comprehensive design — brand identity, logo generation (55 styles), CIP, mockups, slides, icons, social photos",
+    path: "~/.opencode/skills/design/SKILL.md",
+    source: "nextlevelbuilder/ui-ux-pro-max-skill",
+  },
+  "slides": {
+    name: "slides",
+    description: "HTML presentations — Chart.js, design tokens, responsive layouts, copywriting formulas, slide strategies",
+    path: "~/.opencode/skills/slides/SKILL.md",
+    source: "nextlevelbuilder/ui-ux-pro-max-skill",
+  },
+  "ui-styling": {
+    name: "ui-styling",
+    description: "UI styling — shadcn/ui, Radix UI, Tailwind CSS, accessible components, dark mode, responsive layouts",
+    path: "~/.opencode/skills/ui-styling/SKILL.md",
+    source: "nextlevelbuilder/ui-ux-pro-max-skill",
   },
   "behavioural-psychology": {
     name: "behavioural-psychology",
-    description: "Behavioural psychology — cognitive biases, motivation models, ethical design patterns",
+    description: "Behavioural psychology — 20 cognitive biases, 5 motivation models, cognitive load types, 6 ethical principles, 8 dark patterns",
     path: "~/.opencode/skills/behavioural-psychology/SKILL.md",
+    source: "custom-built",
   },
   "code-review": {
     name: "code-review",
-    description: "Code review — vulnerability taxonomy (P0-P4), anti-patterns, security headers checklist",
+    description: "Code review — P0-P4 vulnerability taxonomy, language anti-patterns, security headers checklist",
     path: "~/.opencode/skills/code-review/SKILL.md",
+    source: "custom-built",
   },
 }
 
@@ -37,4 +72,22 @@ export function getSkillInfo(name: string): SkillInfo | undefined {
 
 export function getSkillNames(): string[] {
   return Object.keys(SKILL_MAP)
+}
+
+export function getSkillsForLane(lane: string): SkillInfo[] {
+  const laneMap: Record<string, string[]> = {
+    "ux-review": ["ui-ux-pro-max", "design-system", "brand", "ui-styling", "design", "banner-design", "slides"],
+    "design": ["ui-ux-pro-max", "design-system", "brand", "ui-styling", "design", "banner-design", "slides"],
+    "psychology": ["behavioural-psychology"],
+    "review": ["code-review"],
+    "security": ["code-review"],
+    "docs": [],
+    "debug": [],
+    "test": [],
+    "arch": [],
+    "research": [],
+    "general": [],
+  }
+  const names = laneMap[lane] ?? []
+  return names.map((n) => SKILL_MAP[n]).filter((s): s is SkillInfo => s !== undefined)
 }
