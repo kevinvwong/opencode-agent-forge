@@ -66,6 +66,12 @@ const SKILL_MAP: Record<string, SkillInfo> = {
     path: "~/.config/opencode/skills/skill-security-auditor/SKILL.md",
     source: "alirezarezvani/claude-skills (21k stars)",
   },
+  "threat-modeler": {
+    name: "threat-modeler",
+    description: "Threat modeling — STRIDE categorization, attack trees, CWE/OWASP mapping, multi-agent vulnerability analysis, execution monitoring",
+    path: "~/.config/opencode/skills/threat-modeler/SKILL.md",
+    source: "custom-built (PentAGI-inspired)",
+  },
   "api-design-reviewer": {
     name: "api-design-reviewer",
     description: "API design review — REST API linter, breaking change detector, design scorecard",
@@ -103,8 +109,8 @@ export function getSkillsForLane(lane: string): SkillInfo[] {
     "ux-review": ["ui-ux-pro-max", "design-system", "ui-styling"],
     "design": ["ui-ux-pro-max", "design-system", "brand", "ui-styling", "design", "banner-design", "slides"],
     "psychology": ["behavioural-psychology"],
-    "review": ["code-review", "skill-security-auditor"],
-    "security": ["code-review", "skill-security-auditor"],
+    "review": ["code-review", "skill-security-auditor", "threat-modeler"],
+    "security": ["code-review", "skill-security-auditor", "threat-modeler"],
     "docs": [],
     "debug": [],
     "test": [],
