@@ -66,6 +66,24 @@ const SKILL_MAP: Record<string, SkillInfo> = {
     path: "~/.config/opencode/skills/skill-security-auditor/SKILL.md",
     source: "alirezarezvani/claude-skills (21k stars)",
   },
+  "api-design-reviewer": {
+    name: "api-design-reviewer",
+    description: "API design review — REST API linter, breaking change detector, design scorecard",
+    path: "~/.config/opencode/skills/api-design-reviewer/SKILL.md",
+    source: "alirezarezvani/claude-skills (21k stars)",
+  },
+  "database-designer": {
+    name: "database-designer",
+    description: "Database schema design — schema analyzer, ERD generation, index optimizer, migration generator",
+    path: "~/.config/opencode/skills/database-designer/SKILL.md",
+    source: "alirezarezvani/claude-skills (21k stars)",
+  },
+  "migration-architect": {
+    name: "migration-architect",
+    description: "Migration planning — migration planner, compatibility checker, rollback generator",
+    path: "~/.config/opencode/skills/migration-architect/SKILL.md",
+    source: "alirezarezvani/claude-skills (21k stars)",
+  },
 }
 
 export function getAvailableSkills(): SkillInfo[] {
@@ -90,7 +108,7 @@ export function getSkillsForLane(lane: string): SkillInfo[] {
     "docs": [],
     "debug": [],
     "test": [],
-    "arch": [],
+    "arch": ["api-design-reviewer", "database-designer", "migration-architect"],
     "research": [],
     "general": [],
   }
