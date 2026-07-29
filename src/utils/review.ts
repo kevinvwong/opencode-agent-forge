@@ -20,13 +20,13 @@ const CHECKS = [
   { cat: "quantifiable" as const, label: "Output format in prompt", fn: (a: Agent) => /Output|Format|---/.test(a.prompt) ? { s: "pass" as const, d: "Found" } : { s: "warn" as const, d: "Missing" } },
   { cat: "quantifiable" as const, label: "Perms match role", fn: (a: Agent) => { const e = a.permissions?.edit; return e === "deny" || e === "allow" ? { s: "pass" as const, d: `edit:${e}` } : { s: "warn" as const, d: `edit:${e ?? "not set"}` } } },
   { cat: "quantifiable" as const, label: "Triggers relate to body", fn: (a: Agent) => { const kws = a.description.toLowerCase().split(/[,:\s]+/).filter((w) => w.length > 3).slice(0, 5); return kws.some((k) => a.prompt.toLowerCase().includes(k)) ? { s: "pass" as const, d: "Match" } : { s: "warn" as const, d: "No overlap" } } },
-  { cat: "qualifiable" as const, label: "Has production usage", fn: (a: Agent) => a.sessionCount > 0 || a.lastUsed ? { s: "pass" as const, d: `${a.sessionCount} sessions` } : { s: "warn" as const, d: "Unused" } },
-  { cat: "qualifiable" as const, label: "Color set", fn: (a: Agent) => a.color ? { s: "pass" as const, d: a.color } : { s: "warn" as const, d: "Missing" } },
-  { cat: "qualifiable" as const, label: "No duplicate name", fn: (_: Agent, all: Agent[]) => { const dupe = all.filter((a) => a.name === _.name); return dupe.length <= 1 ? { s: "pass" as const, d: "Unique" } : { s: "warn" as const, d: `Duplicated ${dupe.length}x` } } },
-  { cat: "qualifiable" as const, label: "Starts with role definition", fn: (a: Agent) => /^You are (a|an)/.test(a.prompt.trim()) ? { s: "pass" as const, d: "Has role" } : { s: "warn" as const, d: "Missing" } },
+  { cat: "qualifiable" as const, label: "Has production usage", fn: (a: Agent) => a.sessionCount > 0 || a.lastUsed ? { s: "pass" as const, d: `${a.sessionCount} sessions` } : { s: "sugg" as const, d: "Unused" } },
+  { cat: "qualifiable" as const, label: "Color set", fn: (a: Agent) => a.color ? { s: "pass" as const, d: a.color } : { s: "sugg" as const, d: "Missing" } },
+  { cat: "qualifiable" as const, label: "No duplicate name", fn: (_: Agent, all: Agent[]) => { const dupe = all.filter((a) => a.name === _.name); return dupe.length <= 1 ? { s: "pass" as const, d: "Unique" } : { s: "sugg" as const, d: `Duplicated ${dupe.length}x` } } },
+  { cat: "qualifiable" as const, label: "Starts with role definition", fn: (a: Agent) => /^You are (a|an)/.test(a.prompt.trim()) ? { s: "pass" as const, d: "Has role" } : { s: "sugg" as const, d: "Missing" } },
 ]
 
-const TIER = { pass: 0, warn: 10, sugg: 5, fail: Infinity }
+const TIER: Record<string, number> = { pass: 0, warn: 10, sugg: 5, fail: Infinity }
 
 function calcCategory(cat: string, checks: ReviewCheck[]): number {
   const inCat = checks.filter((c) => c.category === cat)

@@ -69,9 +69,12 @@ export function rankAgents(task: string, agents: Agent[]): RoutingScore[] {
       const caps = computeCapabilities(agent)
       const capabilityFit = computeCapabilityFit(task, caps)
 
-      const recencyBonus = agent.lastUsed
-        ? Math.max(0, 1 - (Date.now() - new Date(agent.lastUsed).getTime()) / (30 * 24 * 60 * 60 * 1000))
-        : 0
+      const recencyBonus = (() => {
+        if (!agent.lastUsed) return 0
+        const t = new Date(agent.lastUsed).getTime()
+        if (isNaN(t)) return 0
+        return Math.max(0, Math.min(1, 1 - (Date.now() - t) / (30 * 24 * 60 * 60 * 1000)))
+      })()
 
       const weights = { tag: 0.35, desc: 0.25, cap: 0.25, usage: 0.15 }
       const score =

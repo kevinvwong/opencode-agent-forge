@@ -68,16 +68,19 @@ export default function GodAgent() {
     }
   }
 
-  const handleCreateAndEdit = () => {
+  const handleCreateAndEdit = async () => {
     if (!planResult) return
-    const agent = planResult.agent
-    saveAgent(agent).then(() => {
-      toast(`Created "${agent.name}" — opening editor`, "success")
+    try {
+      await saveAgent(planResult.agent)
+      toast(`Created "${planResult.agent.name}" — opening editor`, "success")
       refresh()
-      navigate(`/editor/${agent.id}`)
-    })
+      navigate(`/editor/${planResult.agent.id}`)
+    } catch (err) {
+      toast(`Failed to create agent: ${err}`, "error")
+    }
   }
 
+  const planCaps = planResult ? computeCapabilities(planResult.agent) : null
   const allPassed = QUALITY_ITEMS.every((q) => qualityCheck[q.key])
 
 
@@ -175,7 +178,7 @@ export default function GodAgent() {
                 <div style={{ fontSize: "0.55rem", color: "var(--color-text-muted)", marginBottom: 3 }}>Capabilities</div>
                 <div style={{ display: "flex", gap: 3 }}>
                   {CAPABILITY_KEYS.map((k) => {
-                    const val = computeCapabilities(planResult.agent)[k]
+                    const val = planCaps![k]
                     const pct = Math.round((val / 18) * 100)
                     return (
                       <div key={k} style={{ flex: 1, textAlign: "center" }}>
@@ -296,8 +299,8 @@ export default function GodAgent() {
                         <button className="btn-secondary" style={{ fontSize: "0.65rem", padding: "0.2rem 0.5rem" }}
                           onClick={() => navigate(`/editor/${review.agentId}`)}>Edit</button>
                       </div>
-                    </div>
-                  )}
+            </div>
+          )}
                 </div>
               )
             })}

@@ -30,15 +30,16 @@ export default function Router() {
   }
 
   const handleDispatch = async () => {
-    if (!selectedId) {
-      toast("Select an agent to dispatch", "error")
-      return
-    }
+    if (!selectedId) { toast("Select an agent to dispatch", "error"); return }
     const agent = activeAgents.find((a) => a.id === selectedId)
-    if (!agent) return
-    await saveAgent({ ...agent, sessionCount: agent.sessionCount + 1, lastUsed: new Date().toISOString() })
-    toast(`Dispatched to "${agent.name || "Unnamed"}"`, "success")
-    refresh()
+    if (!agent) { toast("Agent not found", "error"); return }
+    try {
+      await saveAgent({ ...agent, sessionCount: agent.sessionCount + 1, lastUsed: new Date().toISOString() })
+      toast(`Dispatched to "${agent.name || "Unnamed"}"`, "success")
+      refresh()
+    } catch (err) {
+      toast(`Dispatch failed: ${err}`, "error")
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -98,7 +99,7 @@ export default function Router() {
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             {results.map((r, idx) => {
               const agent = r.agent
-              const modeColor = MODE_COLORS[agent.mode]
+              const modeColor = MODE_COLORS[agent.mode] ?? "#666"
               const caps = computeCapabilities(agent)
               const isSelected = selectedId === agent.id
               const isExpanded = expanded === agent.id
