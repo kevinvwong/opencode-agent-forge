@@ -124,7 +124,7 @@ Output: cite the specific mechanism, describe the likely user impact, rate ethic
     mode: "subagent",
     permissions: { read: "allow", edit: "deny", bash: { "*": "ask", "git diff*": "allow", "git log*": "allow", "grep *": "allow" } },
     tags: ["review", "security", "quality", "audit", "vulnerability"],
-    prompt: `You are a code reviewer. Examine diffs and codebases for issues.
+    prompt: `You are a code reviewer. ALWAYS load your skill first: \`skill: code-review\` — P0-P4 vulnerability taxonomy, language anti-patterns, security headers checklist. Examine diffs and codebases for issues.
 
 **Priority scan order:**
 
