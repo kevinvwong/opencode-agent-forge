@@ -60,6 +60,12 @@ const SKILL_MAP: Record<string, SkillInfo> = {
     path: "~/.opencode/skills/code-review/SKILL.md",
     source: "custom-built",
   },
+  "skill-security-auditor": {
+    name: "skill-security-auditor",
+    description: "Security audit scanner — scans skills for malicious code, command injection, data exfiltration, prompt injection before installation",
+    path: "~/.config/opencode/skills/skill-security-auditor/SKILL.md",
+    source: "alirezarezvani/claude-skills (21k stars)",
+  },
 }
 
 export function getAvailableSkills(): SkillInfo[] {
@@ -79,8 +85,8 @@ export function getSkillsForLane(lane: string): SkillInfo[] {
     "ux-review": ["ui-ux-pro-max", "design-system", "ui-styling"],
     "design": ["ui-ux-pro-max", "design-system", "brand", "ui-styling", "design", "banner-design", "slides"],
     "psychology": ["behavioural-psychology"],
-    "review": ["code-review"],
-    "security": ["code-review"],
+    "review": ["code-review", "skill-security-auditor"],
+    "security": ["code-review", "skill-security-auditor"],
     "docs": [],
     "debug": [],
     "test": [],
