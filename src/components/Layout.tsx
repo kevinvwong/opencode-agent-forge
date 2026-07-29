@@ -13,6 +13,10 @@ const nav = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
+      <a href="#main-content" style={{ position: "absolute", top: -100, left: 8, background: "var(--color-accent)", color: "#fff", padding: "8px", zIndex: 9999, borderRadius: 4, fontSize: "0.8rem" }}
+        onFocus={(e) => e.currentTarget.style.top = "8px"}
+        onBlur={(e) => e.currentTarget.style.top = "-100px"}
+      >Skip to content</a>
       <nav
         style={{
           width: 180,
@@ -62,7 +66,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
 
-      <main style={{ flex: 1, padding: "1rem 1.5rem", overflowY: "auto" }}>
+      <main id="main-content" style={{ flex: 1, padding: "1rem 1.5rem", overflowY: "auto" }}>
         {children}
       </main>
     </div>
