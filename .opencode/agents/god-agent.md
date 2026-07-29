@@ -1,7 +1,7 @@
 ---
 description: "For opencode: god, orchestrate, route, dispatch, which agent, audit, review, create agent, train, improve, scan agents, health check, batch. Meta-orchestrator for the agent workforce."
 mode: all
-model: deepseek/deepseek-flash
+model: opencode/deepseek-v4-flash
 temperature: 0.15
 top_p: 0.5
 steps: 15
