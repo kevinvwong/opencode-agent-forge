@@ -10,6 +10,7 @@ export interface TeacherPlan {
   configChanges: ConfigChange[]
   promptImprovements: string[]
   projectedScore: number
+  githubSources: { name: string; stars: number; skills: number; url: string }[]
 }
 
 export interface ConfigChange {
@@ -35,7 +36,16 @@ const SKILL_LANE_MAP: Record<string, string[]> = {
   "design-system": ["ux-review", "design"],
   "behavioural-psychology": ["psychology"],
   "code-review": ["review", "security"],
+  "skill-security-auditor": ["review", "security"],
 }
+
+export const GITHUB_SOURCES = [
+  { name: "nextlevelbuilder/ui-ux-pro-max-skill", stars: 111000, skills: 7, url: "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill" },
+  { name: "alirezarezvani/claude-skills", stars: 21000, skills: 355, url: "https://github.com/alirezarezvani/claude-skills" },
+  { name: "nextlevelbuilder/goclaw", stars: 3500, skills: 6, url: "https://github.com/nextlevelbuilder/goclaw" },
+  { name: "nextlevelbuilder/skillx", stars: 164, skills: 500, url: "https://github.com/nextlevelbuilder/skillx" },
+  { name: "gideonfip/opencode-skills", stars: 2, skills: 5, url: "https://github.com/gideonfip/opencode-skills" },
+]
 
 function detectLane(agent: Agent): string {
   const text = `${agent.name} ${agent.description} ${agent.tags.join(" ")}`.toLowerCase()
@@ -65,6 +75,7 @@ export function teach(agent: Agent): TeacherPlan {
   const lane = detectLane(agent)
   const baselineScore = computeBaselineScore(agent)
   const laneCfg = LANE_PATTERNS[lane]
+  const topSources = GITHUB_SOURCES.filter((s) => s.stars >= 100).sort((a, b) => b.stars - a.stars)
 
   const configChanges: ConfigChange[] = []
   const promptImprovements: string[] = []
@@ -111,5 +122,6 @@ export function teach(agent: Agent): TeacherPlan {
     configChanges,
     promptImprovements,
     projectedScore,
+    githubSources: topSources,
   }
 }
