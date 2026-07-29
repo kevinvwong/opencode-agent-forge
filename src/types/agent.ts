@@ -102,7 +102,7 @@ export const CAPABILITY_COLORS: Record<keyof AgentCapabilities, string> = {
   responseAgility: "#ea580c",
   sessionResilience: "#16a34a",
   modelIntelligence: "#2563eb",
-  contextAwareness: "#7c3aed",
+  contextAwareness: "#0891b2",
   collaboration: "#db2777",
 }
 
@@ -114,7 +114,7 @@ export const MODE_LABELS: Record<AgentMode, string> = {
 
 export const MODE_COLORS: Record<AgentMode, string> = {
   primary: "#dc2626",
-  subagent: "#7c3aed",
+  subagent: "#5599ff",
   all: "#d4a843",
 }
 

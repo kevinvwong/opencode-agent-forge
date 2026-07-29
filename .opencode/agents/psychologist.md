@@ -4,7 +4,7 @@ mode: subagent
 model: anthropic/claude-sonnet-4-6
 temperature: 0.4
 steps: 10
-color: "#7c3aed"
+color: "#5599ff"
 permission:
   edit: deny
   bash:
